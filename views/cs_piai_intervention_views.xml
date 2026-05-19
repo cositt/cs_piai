@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_intervention_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.intervention.list</field>
+            <field name="model">cs.piai.intervention</field>
+            <field name="arch" type="xml">
+                <list string="Intervenciones" editable="bottom">
+                    <field name="area" string="Área"/>
+                    <field name="intervention_type" string="Tipo"/>
+                    <field name="frequency" string="Frecuencia"/>
+                    <field name="responsible_id" string="Responsable"/>
+                    <field name="state" string="Estado" widget="badge"
+                           decoration-success="state == 'finished'"
+                           decoration-warning="state == 'active'"
+                           decoration-muted="state == 'suspended'"/>
+                    <field name="start_date" string="Inicio" optional="show"/>
+                    <field name="end_date" string="Fin" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_intervention_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.intervention.form</field>
+            <field name="model">cs.piai.intervention</field>
+            <field name="arch" type="xml">
+                <form string="Intervención">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="area"/>
+                                <field name="intervention_type"/>
+                                <field name="frequency"/>
+                                <field name="responsible_id"/>
+                                <field name="state"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+                        <group string="Objetivos Asociados" col="1">
+                            <field name="objective_ids" nolabel="1" widget="many2many_tags"/>
+                        </group>
+                        <group string="Descripción" col="1">
+                            <field name="description" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

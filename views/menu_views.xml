@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="cs_menu_piai_root"
+                  name="PIAI"
+                  sequence="55"
+                  groups="base.group_user"/>
+
+        <menuitem id="cs_menu_piai"
+                  name="PIAI"
+                  parent="cs_menu_piai_root"
+                  sequence="1"/>
+
+        <menuitem id="cs_menu_piai_list"
+                  name="Todos los PIAIs"
+                  parent="cs_menu_piai"
+                  action="cs_piai_action"
+                  sequence="10"
+                  groups="cs_piai.group_cs_direction,cs_piai.group_cs_psychology,cs_piai.group_cs_social,cs_piai.group_cs_medical,cs_piai.group_cs_admin_staff"/>
+
+        <menuitem id="cs_menu_piai_monitor"
+                  name="Residentes"
+                  parent="cs_menu_piai"
+                  action="cs_piai_monitor_action"
+                  sequence="20"
+                  groups="cs_piai.group_cs_monitor"/>
+    </data>
+</odoo>

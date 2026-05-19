@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_cs_direction" model="res.groups">
+            <field name="name">PIAI - Dirección</field>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <record id="group_cs_psychology" model="res.groups">
+            <field name="name">PIAI - Psicología</field>
+        </record>
+
+        <record id="group_cs_social" model="res.groups">
+            <field name="name">PIAI - Trabajo Social</field>
+        </record>
+
+        <record id="group_cs_medical" model="res.groups">
+            <field name="name">PIAI - Médico/Enfermería</field>
+        </record>
+
+        <!-- Todas las monitoras comparten UN único usuario/contraseña (ver spec PIAI.docx).
+             Las record_rules NO pueden filtrar por user_id en este grupo. -->
+        <record id="group_cs_monitor" model="res.groups">
+            <field name="name">PIAI - Monitoras</field>
+        </record>
+
+        <record id="group_cs_admin_staff" model="res.groups">
+            <field name="name">PIAI - Administración</field>
+        </record>
+    </data>
+</odoo>

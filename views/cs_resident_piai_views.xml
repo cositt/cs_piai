@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Smart button PIAI en ficha del residente -->
+        <record id="cs_resident_piai_smart_button" model="ir.ui.view">
+            <field name="name">cs.resident.piai.smart.button</field>
+            <field name="model">cs.resident</field>
+            <field name="inherit_id" ref="cs_resident.resident_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_piai" type="object"
+                            class="oe_stat_button" icon="fa-file-text-o">
+                        <field name="piai_count" widget="statinfo" string="PIAI"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Alerta riesgos críticos en ficha residente (justo debajo del button_box) -->
+        <record id="cs_resident_critical_risk_alert" model="ir.ui.view">
+            <field name="name">cs.resident.critical.risk.alert</field>
+            <field name="model">cs.resident</field>
+            <field name="inherit_id" ref="cs_resident.resident_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="after">
+                    <div class="alert alert-danger mb-0" role="alert"
+                         invisible="critical_risk_count == 0">
+                        <strong>&#9888; PIAI: <field name="critical_risk_count" nolabel="1" readonly="1"/> riesgo(s) crítico(s) activo(s)</strong>
+                        — Abra el PIAI para más información.
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

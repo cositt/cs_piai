@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_cs_piai_print_wizard_form" model="ir.ui.view">
+            <field name="name">cs.piai.print.wizard.form</field>
+            <field name="model">cs.piai.print.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Imprimir PIAI">
+                    <group>
+                        <field name="piai_id" invisible="1"/>
+                        <field name="report_type" widget="radio" string="Selecciona el documento a imprimir"/>
+                    </group>
+                    <footer>
+                        <button name="action_print" string="Imprimir PDF" type="object"
+                                class="btn-primary" icon="fa-print"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_cs_piai_print_wizard" model="ir.actions.act_window">
+            <field name="name">Imprimir PIAI</field>
+            <field name="res_model">cs.piai.print.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_piai_id': active_id}</field>
+        </record>
+    </data>
+</odoo>

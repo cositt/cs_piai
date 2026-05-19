@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_objective_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.objective.list</field>
+            <field name="model">cs.piai.objective</field>
+            <field name="arch" type="xml">
+                <list string="Objetivos" editable="bottom" default_order="sequence,area">
+                    <field name="sequence" widget="handle"/>
+                    <field name="area" string="Área"/>
+                    <field name="name" string="Objetivo"/>
+                    <field name="state" string="Estado" widget="badge"
+                           decoration-success="state == 'achieved'"
+                           decoration-warning="state in ['in_progress', 'partially_achieved']"
+                           decoration-danger="state == 'not_achieved'"
+                           decoration-muted="state in ['suspended', 'not_started']"/>
+                    <field name="responsible_id" string="Responsable"/>
+                    <field name="expected_date" string="F. Prevista"
+                           decoration-danger="expected_date and expected_date &lt; context_today() and state == 'in_progress'"/>
+                    <field name="actual_date" string="F. Real" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_objective_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.objective.form</field>
+            <field name="model">cs.piai.objective</field>
+            <field name="arch" type="xml">
+                <form string="Objetivo Terapéutico">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="area"/>
+                                <field name="name"/>
+                                <field name="state"/>
+                                <field name="responsible_id"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="expected_date"/>
+                                <field name="actual_date"/>
+                            </group>
+                        </group>
+                        <group string="Indicador de Seguimiento" col="1">
+                            <field name="indicator" nolabel="1"/>
+                        </group>
+                        <group string="Observaciones" col="1">
+                            <field name="notes" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

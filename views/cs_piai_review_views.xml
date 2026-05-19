@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_review_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.review.list</field>
+            <field name="model">cs.piai.review</field>
+            <field name="arch" type="xml">
+                <list string="Revisiones" editable="bottom">
+                    <field name="review_date" string="Fecha"/>
+                    <field name="review_type" string="Tipo"/>
+                    <field name="overall_evolution" string="Evolución"/>
+                    <field name="validated_by" string="Validado por"/>
+                    <field name="next_review_date" string="Próxima Revisión"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_review_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.review.form</field>
+            <field name="model">cs.piai.review</field>
+            <field name="arch" type="xml">
+                <form string="Revisión del PIAI">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="review_date"/>
+                                <field name="review_type"/>
+                                <field name="overall_evolution"/>
+                                <field name="user_participates"/>
+                                <field name="info_transferred_to_user"/>
+                            </group>
+                            <group>
+                                <field name="participant_ids" widget="many2many_tags"/>
+                                <field name="validated_by"/>
+                                <field name="validated_date"/>
+                                <field name="next_review_date"/>
+                            </group>
+                        </group>
+                        <group string="Motivo (si es extraordinaria)" col="1" invisible="review_type != 'extraordinary'">
+                            <field name="reason" nolabel="1"/>
+                        </group>
+                        <group string="Cambios Realizados" col="1">
+                            <field name="changes_made" nolabel="1"/>
+                        </group>
+                        <group string="Acuerdos" col="1">
+                            <field name="agreements" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

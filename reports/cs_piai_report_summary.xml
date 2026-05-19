@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_cs_piai_summary" model="ir.actions.report">
+            <field name="name">PIAI — Resumen Equipo</field>
+            <field name="model">cs.piai</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cs_piai.report_piai_summary_document</field>
+            <field name="print_report_name">'PIAI-Resumen-%s' % object.name</field>
+            <field name="binding_model_id" ref="cs_piai.model_cs_piai"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_piai_summary_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="piai">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>PIAI — Resumen para el Equipo</h2>
+                            <h3><t t-esc="piai.resident_id.name"/> — <t t-esc="piai.name"/></h3>
+                            <hr/>
+                            <table class="table table-sm">
+                                <tr><td><strong>Fase</strong></td>
+                                    <td><t t-esc="dict(piai.fields_get(['therapeutic_phase'])['therapeutic_phase']['selection']).get(piai.therapeutic_phase, '')"/></td>
+                                    <td><strong>Referente</strong></td>
+                                    <td><t t-esc="piai.referent_id.name"/></td></tr>
+                                <tr><td><strong>Próxima Revisión</strong></td>
+                                    <td><t t-esc="piai.date_next_review"/></td>
+                                    <td><strong>Riesgos Críticos</strong></td>
+                                    <td><t t-esc="piai.critical_risk_count"/></td></tr>
+                            </table>
+
+                            <h4>Objetivos Activos</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead><tr><th>Área</th><th>Objetivo</th><th>Estado</th><th>Responsable</th></tr></thead>
+                                <tbody>
+                                    <t t-foreach="piai.objective_ids.filtered(lambda o: o.state not in ['suspended','achieved'])" t-as="obj">
+                                        <tr>
+                                            <td><t t-esc="dict(obj.fields_get(['area'])['area']['selection']).get(obj.area, '')"/></td>
+                                            <td><t t-esc="obj.name"/></td>
+                                            <td><t t-esc="dict(obj.fields_get(['state'])['state']['selection']).get(obj.state, '')"/></td>
+                                            <td><t t-esc="obj.responsible_id.name"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <h4>Intervenciones Activas</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead><tr><th>Tipo</th><th>Frecuencia</th><th>Responsable</th></tr></thead>
+                                <tbody>
+                                    <t t-foreach="piai.intervention_ids.filtered(lambda i: i.state == 'active')" t-as="interv">
+                                        <tr>
+                                            <td><t t-esc="dict(interv.fields_get(['intervention_type'])['intervention_type']['selection']).get(interv.intervention_type, '')"/></td>
+                                            <td><t t-esc="dict(interv.fields_get(['frequency'])['frequency']['selection']).get(interv.frequency, '')"/></td>
+                                            <td><t t-esc="interv.responsible_id.name"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <t t-if="piai.risk_ids.filtered(lambda r: r.state == 'active')">
+                                <h4>Riesgos Activos</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Tipo</th><th>Nivel</th><th>Próx. Revisión</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.risk_ids.filtered(lambda r: r.state == 'active')" t-as="risk">
+                                            <tr t-attf-style="#{risk.level == 'critical' and 'background-color: #ffd7d7;' or ''}">
+                                                <td><t t-esc="dict(risk.fields_get(['risk_type'])['risk_type']['selection']).get(risk.risk_type, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['level'])['level']['selection']).get(risk.level, '')"/></td>
+                                                <td><t t-esc="risk.date_review"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <p class="text-muted" style="margin-top:2em; font-size:0.8em;">
+                                Generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            </p>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

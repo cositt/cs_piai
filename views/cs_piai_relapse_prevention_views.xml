@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_relapse_prevention_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.relapse.prevention.form</field>
+            <field name="model">cs.piai.relapse.prevention</field>
+            <field name="arch" type="xml">
+                <form string="Plan de Prevención de Recaídas">
+                    <sheet>
+                        <group>
+                            <group col="1">
+                                <field name="high_risk_situations" placeholder="Situaciones de alto riesgo identificadas..."/>
+                            </group>
+                            <group col="1">
+                                <field name="warning_signs" placeholder="Señales de aviso tempranas..."/>
+                            </group>
+                        </group>
+                        <group>
+                            <group col="1">
+                                <field name="coping_strategies" placeholder="Estrategias de afrontamiento..."/>
+                            </group>
+                            <group col="1">
+                                <field name="social_support_plan" placeholder="Plan de apoyo social..."/>
+                            </group>
+                        </group>
+                        <group>
+                            <group col="1">
+                                <field name="action_plan_relapse" placeholder="Plan de actuación ante una recaída..."/>
+                            </group>
+                            <group>
+                                <field name="emergency_contacts"/>
+                                <field name="emergency_resources"/>
+                                <field name="psychoeducation_completed"/>
+                            </group>
+                        </group>
+                        <group string="Observaciones" col="1">
+                            <field name="notes" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

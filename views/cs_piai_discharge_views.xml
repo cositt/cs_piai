@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_discharge_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.discharge.plan.form</field>
+            <field name="model">cs.piai.discharge.plan</field>
+            <field name="arch" type="xml">
+                <form string="Plan de Alta">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="discharge_type"/>
+                                <field name="expected_date"/>
+                                <field name="user_signed"/>
+                                <field name="family_informed"/>
+                            </group>
+                            <group>
+                                <field name="referral_resource" invisible="discharge_type != 'referral'"/>
+                                <field name="referral_contact" invisible="discharge_type != 'referral'"/>
+                                <field name="medication_at_discharge" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group col="1">
+                                <field name="achieved_objectives" placeholder="Objetivos conseguidos al alta..."/>
+                            </group>
+                            <group col="1">
+                                <field name="pending_objectives" placeholder="Objetivos pendientes..."/>
+                            </group>
+                        </group>
+                        <group>
+                            <group col="1">
+                                <field name="continuity_treatment" placeholder="Plan de tratamiento de continuidad..."/>
+                            </group>
+                            <group col="1">
+                                <field name="follow_up_plan" placeholder="Plan de seguimiento post-alta..."/>
+                            </group>
+                        </group>
+                        <group string="Recomendaciones al Alta" col="1">
+                            <field name="recommendations" nolabel="1"/>
+                        </group>
+                        <group string="Observaciones" col="1">
+                            <field name="notes" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.list</field>
+            <field name="model">cs.piai</field>
+            <field name="arch" type="xml">
+                <list string="PIAIs"
+                      decoration-success="state == 'active'"
+                      decoration-muted="state in ['closed_discharge','closed_voluntary','closed_referral','closed_expulsion']"
+                      decoration-warning="state in ['pending','in_review']">
+                    <field name="name" string="Referencia"/>
+                    <field name="resident_id" string="Residente"/>
+                    <field name="therapeutic_phase" string="Fase"/>
+                    <field name="state" string="Estado" widget="badge"
+                           decoration-success="state == 'active'"
+                           decoration-warning="state in ['pending','in_review']"
+                           decoration-muted="state not in ['active','pending','in_review']"/>
+                    <field name="referent_id" string="Referente"/>
+                    <field name="date_elaboration" string="Elaboración"/>
+                    <field name="date_next_review" string="Próx. Revisión"
+                           decoration-danger="review_overdue and state == 'active'"/>
+                    <field name="review_overdue" column_invisible="True"/>
+                    <field name="critical_risk_count" string="Riesgos Críticos" widget="badge"
+                           decoration-danger="critical_risk_count &gt; 0"
+                           optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_view_search" model="ir.ui.view">
+            <field name="name">cs.piai.search</field>
+            <field name="model">cs.piai</field>
+            <field name="arch" type="xml">
+                <search string="Buscar PIAI">
+                    <field name="name" string="Referencia"/>
+                    <field name="resident_id" string="Residente"/>
+                    <field name="referent_id" string="Referente"/>
+                    <separator/>
+                    <filter name="filter_active" string="Activos" domain="[('state','=','active')]"/>
+                    <filter name="filter_draft" string="Borradores" domain="[('state','=','draft')]"/>
+                    <filter name="filter_overdue" string="Revisión Vencida"
+                            domain="[('date_next_review','&lt;', context_today()), ('state','in',['active','in_review'])]"/>
+                    <filter name="filter_critical" string="Riesgo Crítico" domain="[('critical_risk_count','>',0)]"/>
+                    <separator/>
+                    <filter name="group_by_phase" string="Agrupar por Fase" context="{'group_by': 'therapeutic_phase'}"/>
+                    <filter name="group_by_state" string="Agrupar por Estado" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_referent" string="Agrupar por Referente" context="{'group_by': 'referent_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="cs_piai_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.form</field>
+            <field name="model">cs.piai</field>
+            <field name="arch" type="xml">
+                <form string="PIAI — Plan Individualizado de Atención Integral">
+                    <header>
+                        <button name="action_set_pending" string="Enviar a Validación"
+                                type="object" class="btn-primary"
+                                invisible="state != 'draft'"
+                                groups="cs_piai.group_cs_psychology,cs_piai.group_cs_direction"/>
+                        <button name="action_activate" string="Activar PIAI"
+                                type="object" class="btn-primary"
+                                invisible="state not in ['draft','pending']"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_set_review" string="Iniciar Revisión"
+                                type="object" class="btn-secondary"
+                                invisible="state != 'active'"
+                                groups="cs_piai.group_cs_direction,cs_piai.group_cs_psychology"/>
+                        <button name="action_activate" string="Reactivar"
+                                type="object" class="btn-secondary"
+                                invisible="state != 'in_review'"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_close_discharge" string="Cerrar — Alta Terapéutica"
+                                type="object" class="btn-secondary"
+                                invisible="state not in ['active','in_review']"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_close_voluntary" string="Alta Voluntaria"
+                                type="object"
+                                invisible="state not in ['active','in_review','draft']"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_close_referral" string="Derivación"
+                                type="object"
+                                invisible="state not in ['active','in_review']"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_reset_draft" string="Volver a Borrador"
+                                type="object"
+                                invisible="state not in ['pending']"
+                                groups="cs_piai.group_cs_direction"/>
+                        <button name="action_reopen" string="Reabrir — Volver a Activo"
+                                type="object" class="btn-warning"
+                                invisible="state not in ['closed_discharge','closed_voluntary','closed_referral','closed_expulsion']"
+                                groups="cs_piai.group_cs_direction"
+                                confirm="¿Seguro que desea reabrir este PIAI y devolverlo al estado Activo?"/>
+                        <button name="action_open_print_wizard"
+                                string="Imprimir" type="object"
+                                icon="fa-print" class="btn-secondary"
+                                invisible="state == 'draft'"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,pending,active,in_review"/>
+                    </header>
+                    <sheet>
+                        <!-- Alertas críticas -->
+                        <div class="alert alert-danger" role="alert"
+                             invisible="critical_risk_count == 0">
+                            <strong>&#9888; RIESGOS CRÍTICOS ACTIVOS: <field name="critical_risk_count" readonly="1" nolabel="1"/></strong>
+                            — Revise la pestaña "Riesgos y Alertas".
+                        </div>
+                        <div class="alert alert-warning" role="alert"
+                             invisible="not review_overdue or state not in ['active','in_review']">
+                            <strong>&#9888; Revisión del PIAI vencida.</strong>
+                            Programe una revisión lo antes posible.
+                        </div>
+
+                        <!-- Smart buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_evolutions" type="object"
+                                    class="oe_stat_button" icon="fa-pencil">
+                                <field name="objective_count" widget="statinfo" string="Objetivos"/>
+                            </button>
+                            <button name="action_view_evolutions" type="object"
+                                    class="oe_stat_button" icon="fa-exclamation-triangle"
+                                    invisible="active_risk_count == 0">
+                                <field name="active_risk_count" widget="statinfo" string="Riesgos"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+
+                        <!-- Datos generales -->
+                        <group>
+                            <group string="Datos del PIAI">
+                                <field name="resident_id" readonly="state != 'draft'"/>
+                                <field name="referent_id"/>
+                                <field name="therapeutic_phase"/>
+                                <field name="version" readonly="1"/>
+                            </group>
+                            <group string="Fechas">
+                                <field name="date_elaboration"/>
+                                <field name="date_next_review"/>
+                            </group>
+                        </group>
+                        <group string="Observaciones Generales" col="1">
+                            <field name="general_observations" nolabel="1"/>
+                        </group>
+
+                        <!-- Pestañas -->
+                        <notebook>
+                            <page string="Valoraciones Iniciales" name="assessments">
+                                <field name="assessment_ids">
+                                    <list editable="bottom">
+                                        <field name="area_type" string="Área"/>
+                                        <field name="date_assessment" string="Fecha"/>
+                                        <field name="professional_id" string="Profesional"/>
+                                        <field name="priority_level" string="Prioridad" widget="badge"
+                                               decoration-danger="priority_level == 'critical'"
+                                               decoration-warning="priority_level == 'high'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Objetivos" name="objectives">
+                                <field name="objective_ids" widget="one2many">
+                                    <list editable="bottom" default_order="sequence">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="area" string="Área"/>
+                                        <field name="name" string="Objetivo"/>
+                                        <field name="state" string="Estado" widget="badge"
+                                               decoration-success="state == 'achieved'"
+                                               decoration-warning="state == 'in_progress'"
+                                               decoration-danger="state == 'not_achieved'"/>
+                                        <field name="responsible_id" string="Responsable"/>
+                                        <field name="expected_date" string="F. Prevista"
+                                               decoration-danger="expected_date and expected_date &lt; context_today() and state == 'in_progress'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Intervenciones" name="interventions">
+                                <field name="intervention_ids">
+                                    <list editable="bottom">
+                                        <field name="area" string="Área"/>
+                                        <field name="intervention_type" string="Tipo"/>
+                                        <field name="frequency" string="Frecuencia"/>
+                                        <field name="responsible_id" string="Responsable"/>
+                                        <field name="state" string="Estado" widget="badge"
+                                               decoration-warning="state == 'active'"
+                                               decoration-muted="state != 'active'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Riesgos y Alertas" name="risks">
+                                <field name="risk_ids">
+                                    <list editable="bottom"
+                                          decoration-danger="level == 'critical'"
+                                          decoration-warning="level == 'high'">
+                                        <field name="risk_type" string="Tipo"/>
+                                        <field name="level" string="Nivel" widget="badge"
+                                               decoration-danger="level == 'critical'"
+                                               decoration-warning="level == 'high'"/>
+                                        <field name="state" string="Estado"/>
+                                        <field name="responsible_id" string="Responsable"/>
+                                        <field name="date_review" string="Próx. Revisión"/>
+                                        <field name="date_last_reviewed" string="Últ. Rev." optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notas de Evolución" name="evolution">
+                                <button name="action_add_evolution" string="Nueva Nota"
+                                        type="object" class="btn-primary mb-2"
+                                        icon="fa-plus"/>
+                                <field name="evolution_ids" readonly="1">
+                                    <list create="false"
+                                          decoration-danger="note_type == 'crisis'"
+                                          decoration-warning="note_type == 'incident'">
+                                        <field name="datetime" string="Fecha/Hora"/>
+                                        <field name="note_type" string="Tipo" widget="badge"
+                                               decoration-danger="note_type == 'crisis'"
+                                               decoration-warning="note_type == 'incident'"/>
+                                        <field name="area" string="Área"/>
+                                        <field name="professional_id" string="Profesional"/>
+                                        <field name="content" string="Nota"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Revisiones" name="reviews">
+                                <field name="review_ids">
+                                    <list editable="bottom">
+                                        <field name="review_date" string="Fecha"/>
+                                        <field name="review_type" string="Tipo"/>
+                                        <field name="overall_evolution" string="Evolución"/>
+                                        <field name="validated_by" string="Validado por"/>
+                                        <field name="next_review_date" string="Próxima"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Prevención de Recaídas" name="relapse">
+                                <field name="relapse_prevention_id" context="{'default_piai_id': id}">
+                                    <form>
+                                        <sheet>
+                                            <group>
+                                                <group col="1">
+                                                    <field name="high_risk_situations" placeholder="Situaciones de alto riesgo..."/>
+                                                </group>
+                                                <group col="1">
+                                                    <field name="warning_signs" placeholder="Señales de aviso tempranas..."/>
+                                                </group>
+                                            </group>
+                                            <group>
+                                                <group col="1">
+                                                    <field name="coping_strategies" placeholder="Estrategias de afrontamiento..."/>
+                                                </group>
+                                                <group col="1">
+                                                    <field name="social_support_plan" placeholder="Plan de apoyo social..."/>
+                                                </group>
+                                            </group>
+                                            <group>
+                                                <field name="psychoeducation_completed"/>
+                                                <field name="emergency_contacts"/>
+                                            </group>
+                                            <group col="1">
+                                                <field name="action_plan_relapse" placeholder="Plan de actuación ante recaída..."/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Plan de Alta" name="discharge"
+                                  invisible="state not in ['in_review','closed_discharge','closed_voluntary','closed_referral','closed_expulsion']">
+                                <group>
+                                    <field name="discharge_plan_id" string="Plan de Alta"
+                                           context="{'default_piai_id': id}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="cs_piai_action" model="ir.actions.act_window">
+            <field name="name">PIAI</field>
+            <field name="res_model">cs.piai</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay PIAIs. Crea el primero desde la ficha del residente.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

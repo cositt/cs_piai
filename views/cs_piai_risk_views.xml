@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_risk_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.risk.list</field>
+            <field name="model">cs.piai.risk</field>
+            <field name="arch" type="xml">
+                <list string="Riesgos y Alertas" editable="bottom"
+                      decoration-danger="level == 'critical'"
+                      decoration-warning="level == 'high'">
+                    <field name="risk_type" string="Tipo"/>
+                    <field name="level" string="Nivel" widget="badge"
+                           decoration-danger="level == 'critical'"
+                           decoration-warning="level == 'high'"
+                           decoration-info="level == 'medium'"
+                           decoration-muted="level == 'low'"/>
+                    <field name="state" string="Estado"/>
+                    <field name="responsible_id" string="Responsable"/>
+                    <field name="date_start" string="Identificado"/>
+                    <field name="date_review" string="Próx. Revisión"
+                           decoration-danger="date_review and date_review &lt; context_today() and state == 'active'"/>
+                    <field name="date_last_reviewed" string="Últ. Revisión" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_risk_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.risk.form</field>
+            <field name="model">cs.piai.risk</field>
+            <field name="arch" type="xml">
+                <form string="Riesgo / Alerta Clínica">
+                    <sheet>
+                        <div class="alert alert-danger" role="alert" invisible="level != 'critical'">
+                            <strong>RIESGO CRÍTICO — Requiere actuación inmediata</strong>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="risk_type"/>
+                                <field name="level"/>
+                                <field name="state"/>
+                                <field name="responsible_id"/>
+                            </group>
+                            <group>
+                                <field name="date_start"/>
+                                <field name="date_review"/>
+                                <field name="date_last_reviewed"/>
+                            </group>
+                        </group>
+                        <group string="Descripción del Riesgo" col="1">
+                            <field name="description" nolabel="1"/>
+                        </group>
+                        <group string="Medidas Preventivas" col="1">
+                            <field name="preventive_measures" nolabel="1"/>
+                        </group>
+                        <group string="Plan de Actuación" col="1">
+                            <field name="action_plan" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

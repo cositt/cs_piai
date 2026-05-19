@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_evolution_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.evolution.list</field>
+            <field name="model">cs.piai.evolution</field>
+            <field name="arch" type="xml">
+                <list string="Notas de Evolución" create="true" delete="false"
+                      decoration-danger="note_type == 'crisis'"
+                      decoration-warning="note_type == 'incident'">
+                    <field name="datetime" string="Fecha/Hora"/>
+                    <field name="note_type" string="Tipo" widget="badge"
+                           decoration-danger="note_type == 'crisis'"
+                           decoration-warning="note_type == 'incident'"/>
+                    <field name="area" string="Área"/>
+                    <field name="professional_id" string="Profesional"/>
+                    <field name="content" string="Nota"/>
+                    <field name="requires_piai_review" string="Req. Revisión" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_evolution_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.evolution.form</field>
+            <field name="model">cs.piai.evolution</field>
+            <field name="arch" type="xml">
+                <form string="Nota de Evolución">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="datetime"/>
+                                <field name="note_type"/>
+                                <field name="area"/>
+                                <field name="professional_id"/>
+                                <field name="objective_id"/>
+                                <field name="requires_piai_review"/>
+                            </group>
+                        </group>
+                        <group string="Contenido" col="1">
+                            <field name="content" nolabel="1" placeholder="Descripción de la evolución, intervención o incidencia..."/>
+                        </group>
+                        <group string="Adjuntos" col="1">
+                            <field name="attachment_ids" nolabel="1" widget="many2many_binary"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="cs_piai_evolution_action" model="ir.actions.act_window">
+            <field name="name">Notas de Evolución</field>
+            <field name="res_model">cs.piai.evolution</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

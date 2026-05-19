@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_cs_piai" model="ir.sequence">
+            <field name="name">PIAI Sequence</field>
+            <field name="code">cs.piai</field>
+            <field name="prefix">PIAI-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

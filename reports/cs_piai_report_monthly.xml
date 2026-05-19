@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_cs_piai_monthly" model="ir.actions.report">
+            <field name="name">PIAI — Evolución Mensual</field>
+            <field name="model">cs.piai</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cs_piai.report_piai_monthly_document</field>
+            <field name="print_report_name">'PIAI-Evolucion-%s' % object.name</field>
+            <field name="binding_model_id" ref="cs_piai.model_cs_piai"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_piai_monthly_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="piai">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Evolución Mensual — PIAI</h2>
+                            <h3><t t-esc="piai.resident_id.name"/></h3>
+                            <p><t t-esc="piai.name"/> | Referente: <t t-esc="piai.referent_id.name or '—'"/> |
+                               Fase: <t t-esc="dict(piai.fields_get(['therapeutic_phase'])['therapeutic_phase']['selection']).get(piai.therapeutic_phase, '')"/>
+                            </p>
+                            <hr/>
+
+                            <!-- Notas de evolución del mes en curso -->
+                            <t t-set="today" t-value="datetime.date.today()"/>
+                            <t t-set="month_start" t-value="today.replace(day=1)"/>
+                            <t t-set="monthly_evolutions" t-value="piai.evolution_ids.filtered(lambda e: e.datetime.date() &gt;= month_start)"/>
+
+                            <h4>Notas de Evolución —
+                                <t t-esc="month_start.strftime('%B %Y')"/>
+                                (<t t-esc="len(monthly_evolutions)"/> entradas)
+                            </h4>
+
+                            <t t-if="monthly_evolutions">
+                                <t t-foreach="monthly_evolutions" t-as="evo">
+                                    <div style="border-left: 3px solid #6c757d; padding-left: 10px; margin-bottom: 12px;">
+                                        <p><strong><t t-esc="evo.datetime.strftime('%d/%m/%Y %H:%M')"/></strong>
+                                           — <t t-esc="evo.professional_id.name or 'Profesional no indicado'"/>
+                                           <t t-if="evo.area"> · <em><t t-esc="dict(evo.fields_get(['area'])['area']['selection']).get(evo.area, '')"/></em></t>
+                                           <t t-if="evo.note_type">
+                                               · <span><t t-esc="dict(evo.fields_get(['note_type'])['note_type']['selection']).get(evo.note_type, '')"/></span>
+                                           </t>
+                                        </p>
+                                        <p><t t-esc="evo.content"/></p>
+                                        <t t-if="evo.requires_piai_review">
+                                            <p class="text-warning"><strong>⚠ Requiere revisión del PIAI</strong></p>
+                                        </t>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted">No hay notas de evolución registradas este mes.</p>
+                            </t>
+
+                            <!-- Estado de objetivos -->
+                            <h4>Estado de Objetivos en el Mes</h4>
+                            <t t-if="piai.objective_ids">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Área</th><th>Objetivo</th><th>Estado</th><th>Responsable</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.objective_ids.filtered(lambda o: o.state not in ['suspended'])" t-as="obj">
+                                            <tr>
+                                                <td><t t-esc="dict(obj.fields_get(['area'])['area']['selection']).get(obj.area, '')"/></td>
+                                                <td><t t-esc="obj.name"/></td>
+                                                <td><t t-esc="dict(obj.fields_get(['state'])['state']['selection']).get(obj.state, '')"/></td>
+                                                <td><t t-esc="obj.responsible_id.name or '—'"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <!-- Revisiones del mes -->
+                            <t t-set="monthly_reviews" t-value="piai.review_ids.filtered(lambda r: r.review_date &gt;= month_start)"/>
+                            <t t-if="monthly_reviews">
+                                <h4>Revisiones del PIAI en el Mes</h4>
+                                <t t-foreach="monthly_reviews" t-as="rev">
+                                    <p><strong><t t-esc="rev.review_date"/></strong> —
+                                       <t t-esc="dict(rev.fields_get(['review_type'])['review_type']['selection']).get(rev.review_type, '')"/>
+                                       — Evolución: <t t-esc="dict(rev.fields_get(['overall_evolution'])['overall_evolution']['selection']).get(rev.overall_evolution, '—')"/>
+                                    </p>
+                                    <t t-if="rev.agreements"><p><strong>Acuerdos:</strong> <t t-esc="rev.agreements"/></p></t>
+                                </t>
+                            </t>
+
+                            <!-- Riesgos activos -->
+                            <t t-set="active_risks" t-value="piai.risk_ids.filtered(lambda r: r.state == 'active')"/>
+                            <t t-if="active_risks">
+                                <h4>Riesgos Activos</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Tipo</th><th>Nivel</th><th>Medidas preventivas</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="active_risks" t-as="risk">
+                                            <tr>
+                                                <td><t t-esc="dict(risk.fields_get(['risk_type'])['risk_type']['selection']).get(risk.risk_type, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['level'])['level']['selection']).get(risk.level, '')"/></td>
+                                                <td><t t-esc="risk.preventive_measures or '—'"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

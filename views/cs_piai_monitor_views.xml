@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista simplificada para monitoras: sin datos clínicos sensibles -->
+        <record id="cs_piai_monitor_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.monitor.form</field>
+            <field name="model">cs.piai</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <form string="Ficha del Residente — Vista Monitora">
+                    <header>
+                        <!-- Monitoras solo pueden añadir notas de evolución -->
+                    </header>
+                    <sheet>
+                        <!-- Alertas activas -->
+                        <div class="alert alert-danger" role="alert"
+                             invisible="critical_risk_count == 0">
+                            <strong>&#9888; ALERTAS ACTIVAS</strong> — Revise las indicaciones antes de continuar.
+                        </div>
+
+                        <group>
+                            <group string="Residente">
+                                <field name="resident_id" readonly="1"/>
+                                <field name="therapeutic_phase" readonly="1" string="Fase Terapéutica Actual"/>
+                                <field name="referent_id" readonly="1" string="Profesional Referente"/>
+                            </group>
+                            <group string="Próxima Revisión">
+                                <field name="date_next_review" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Alertas y Restricciones" name="alerts">
+                                <field name="risk_ids" readonly="1"
+                                       domain="[('level', 'in', ['medium','high','critical']), ('state','=','active')]">
+                                    <list create="false" delete="false">
+                                        <field name="risk_type" string="Tipo de Alerta"/>
+                                        <field name="level" string="Nivel" widget="badge"
+                                               decoration-danger="level == 'critical'"
+                                               decoration-warning="level == 'high'"/>
+                                        <field name="preventive_measures" string="Indicaciones"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Objetivos Convivenciales" name="coexistence">
+                                <field name="objective_ids" readonly="1"
+                                       domain="[('area', '=', 'coexistence'), ('state', 'not in', ['suspended', 'achieved'])]">
+                                    <list create="false" delete="false">
+                                        <field name="name" string="Objetivo"/>
+                                        <field name="state" string="Estado" widget="badge"/>
+                                        <field name="indicator" string="Indicador"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notas de Evolución" name="evolution">
+                                <button name="action_add_evolution" string="Registrar Incidencia / Observación"
+                                        type="object" class="btn-primary mb-2"
+                                        icon="fa-plus"/>
+                                <field name="evolution_ids" readonly="1"
+                                       domain="[('note_type', 'in', ['incident', 'evolution'])]">
+                                    <list create="false" default_order="datetime desc">
+                                        <field name="datetime" string="Fecha/Hora"/>
+                                        <field name="note_type" string="Tipo" widget="badge"/>
+                                        <field name="content" string="Nota"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="cs_piai_monitor_action" model="ir.actions.act_window">
+            <field name="name">Residentes — Vista Monitoras</field>
+            <field name="res_model">cs.piai</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="cs_piai_monitor_view_form"/>
+            <field name="domain">[('state', '=', 'active')]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay residentes activos en este momento.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

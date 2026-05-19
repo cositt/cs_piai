@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="cs_piai_assessment_view_list" model="ir.ui.view">
+            <field name="name">cs.piai.assessment.list</field>
+            <field name="model">cs.piai.assessment</field>
+            <field name="arch" type="xml">
+                <list string="Valoraciones" editable="bottom">
+                    <field name="area_type" string="Área"/>
+                    <field name="date_assessment" string="Fecha"/>
+                    <field name="professional_id" string="Profesional"/>
+                    <field name="priority_level" string="Prioridad" widget="badge"
+                           decoration-danger="priority_level == 'critical'"
+                           decoration-warning="priority_level == 'high'"
+                           decoration-info="priority_level == 'medium'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="cs_piai_assessment_view_form" model="ir.ui.view">
+            <field name="name">cs.piai.assessment.form</field>
+            <field name="model">cs.piai.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Valoración Inicial">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="area_type"/>
+                                <field name="date_assessment"/>
+                                <field name="professional_id"/>
+                                <field name="priority_level"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Psicológica -->
+                        <group string="Valoración Psicológica" invisible="area_type != 'psychological'">
+                            <group>
+                                <field name="main_substance_ids" widget="many2many_tags"/>
+                                <field name="onset_age"/>
+                                <field name="awareness_level"/>
+                                <field name="change_motivation"/>
+                                <field name="suicide_risk"/>
+                                <field name="heteroaggressive_risk"/>
+                                <field name="impulsivity"/>
+                                <field name="initial_craving"/>
+                            </group>
+                            <group col="1">
+                                <field name="secondary_substances"/>
+                                <field name="initial_emotional_state"/>
+                                <field name="clinical_observations"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Sanitaria -->
+                        <group string="Valoración Sanitaria" invisible="area_type != 'medical'">
+                            <group>
+                                <field name="withdrawal_signs"/>
+                                <field name="sanitary_risk"/>
+                                <field name="current_medication_ids" widget="many2many_tags"/>
+                            </group>
+                            <group col="1">
+                                <field name="medical_history"/>
+                                <field name="active_pathologies"/>
+                                <field name="allergies_text"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Psiquiátrica -->
+                        <group string="Valoración Psiquiátrica" invisible="area_type != 'psychiatric'">
+                            <group>
+                                <field name="dual_pathology"/>
+                                <field name="stability_level"/>
+                            </group>
+                            <group col="1">
+                                <field name="psychiatric_diagnosis"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Social -->
+                        <group string="Valoración Social" invisible="area_type != 'social'">
+                            <group>
+                                <field name="economic_situation"/>
+                                <field name="housing_situation"/>
+                                <field name="employment_situation"/>
+                            </group>
+                            <group col="1">
+                                <field name="family_situation"/>
+                                <field name="support_network"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Educativa -->
+                        <group string="Valoración Educativa" invisible="area_type != 'educational'">
+                            <group>
+                                <field name="education_level"/>
+                                <field name="social_skills"/>
+                                <field name="personal_autonomy"/>
+                            </group>
+                        </group>
+
+                        <!-- Área Familiar -->
+                        <group string="Valoración Familiar" invisible="area_type != 'family'">
+                            <group>
+                                <field name="consent_inform_family"/>
+                            </group>
+                            <group col="1">
+                                <field name="family_involved_persons"/>
+                                <field name="family_dynamics"/>
+                            </group>
+                        </group>
+
+                        <group string="Riesgos y Necesidades Detectadas">
+                            <group col="1">
+                                <field name="detected_risks" nolabel="1" placeholder="Riesgos detectados en esta área..."/>
+                            </group>
+                            <group col="1">
+                                <field name="detected_needs" nolabel="1" placeholder="Necesidades detectadas en esta área..."/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

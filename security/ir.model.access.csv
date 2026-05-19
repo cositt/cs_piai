@@ -1,0 +1,52 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_piai_direction,PIAI Direction,model_cs_piai,cs_piai.group_cs_direction,1,1,1,1
+access_piai_psychology,PIAI Psychology,model_cs_piai,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_social,PIAI Social,model_cs_piai,cs_piai.group_cs_social,1,1,1,0
+access_piai_medical,PIAI Medical,model_cs_piai,cs_piai.group_cs_medical,1,1,1,0
+access_piai_monitor,PIAI Monitor,model_cs_piai,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_admin,PIAI Admin,model_cs_piai,cs_piai.group_cs_admin_staff,1,0,0,0
+access_piai_user,PIAI User,model_cs_piai,base.group_user,1,0,0,0
+access_piai_objective_direction,PIAI Objective Direction,model_cs_piai_objective,cs_piai.group_cs_direction,1,1,1,1
+access_piai_objective_psychology,PIAI Objective Psychology,model_cs_piai_objective,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_objective_social,PIAI Objective Social,model_cs_piai_objective,cs_piai.group_cs_social,1,1,1,0
+access_piai_objective_medical,PIAI Objective Medical,model_cs_piai_objective,cs_piai.group_cs_medical,1,1,1,0
+access_piai_objective_monitor,PIAI Objective Monitor,model_cs_piai_objective,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_objective_user,PIAI Objective User,model_cs_piai_objective,base.group_user,1,0,0,0
+access_piai_intervention_direction,PIAI Intervention Direction,model_cs_piai_intervention,cs_piai.group_cs_direction,1,1,1,1
+access_piai_intervention_professional,PIAI Intervention Professional,model_cs_piai_intervention,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_intervention_social,PIAI Intervention Social,model_cs_piai_intervention,cs_piai.group_cs_social,1,1,1,0
+access_piai_intervention_medical,PIAI Intervention Medical,model_cs_piai_intervention,cs_piai.group_cs_medical,1,1,1,0
+access_piai_intervention_monitor,PIAI Intervention Monitor,model_cs_piai_intervention,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_intervention_user,PIAI Intervention User,model_cs_piai_intervention,base.group_user,1,0,0,0
+access_piai_assessment_direction,PIAI Assessment Direction,model_cs_piai_assessment,cs_piai.group_cs_direction,1,1,1,1
+access_piai_assessment_psychology,PIAI Assessment Psychology,model_cs_piai_assessment,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_assessment_social,PIAI Assessment Social,model_cs_piai_assessment,cs_piai.group_cs_social,1,1,1,0
+access_piai_assessment_medical,PIAI Assessment Medical,model_cs_piai_assessment,cs_piai.group_cs_medical,1,1,1,0
+access_piai_assessment_user,PIAI Assessment User,model_cs_piai_assessment,base.group_user,1,0,0,0
+access_piai_substance_tag_user,PIAI Substance Tag User,model_cs_piai_substance_tag,base.group_user,1,0,0,0
+access_piai_substance_tag_system,PIAI Substance Tag System,model_cs_piai_substance_tag,base.group_system,1,1,1,1
+access_piai_risk_direction,PIAI Risk Direction,model_cs_piai_risk,cs_piai.group_cs_direction,1,1,1,1
+access_piai_risk_psychology,PIAI Risk Psychology,model_cs_piai_risk,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_risk_social,PIAI Risk Social,model_cs_piai_risk,cs_piai.group_cs_social,1,1,1,0
+access_piai_risk_medical,PIAI Risk Medical,model_cs_piai_risk,cs_piai.group_cs_medical,1,1,1,0
+access_piai_risk_monitor,PIAI Risk Monitor,model_cs_piai_risk,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_risk_user,PIAI Risk User,model_cs_piai_risk,base.group_user,1,0,0,0
+access_piai_evolution_direction,PIAI Evolution Direction,model_cs_piai_evolution,cs_piai.group_cs_direction,1,1,1,1
+access_piai_evolution_psychology,PIAI Evolution Psychology,model_cs_piai_evolution,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_evolution_social,PIAI Evolution Social,model_cs_piai_evolution,cs_piai.group_cs_social,1,1,1,0
+access_piai_evolution_medical,PIAI Evolution Medical,model_cs_piai_evolution,cs_piai.group_cs_medical,1,1,1,0
+access_piai_evolution_monitor,PIAI Evolution Monitor,model_cs_piai_evolution,cs_piai.group_cs_monitor,1,1,1,0
+access_piai_evolution_user,PIAI Evolution User,model_cs_piai_evolution,base.group_user,1,0,0,0
+access_piai_review_direction,PIAI Review Direction,model_cs_piai_review,cs_piai.group_cs_direction,1,1,1,1
+access_piai_review_psychology,PIAI Review Psychology,model_cs_piai_review,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_review_social,PIAI Review Social,model_cs_piai_review,cs_piai.group_cs_social,1,1,1,0
+access_piai_review_medical,PIAI Review Medical,model_cs_piai_review,cs_piai.group_cs_medical,1,1,1,0
+access_piai_review_user,PIAI Review User,model_cs_piai_review,base.group_user,1,0,0,0
+access_piai_relapse_direction,PIAI Relapse Direction,model_cs_piai_relapse_prevention,cs_piai.group_cs_direction,1,1,1,1
+access_piai_relapse_psychology,PIAI Relapse Psychology,model_cs_piai_relapse_prevention,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_relapse_user,PIAI Relapse User,model_cs_piai_relapse_prevention,base.group_user,1,0,0,0
+access_piai_discharge_direction,PIAI Discharge Direction,model_cs_piai_discharge_plan,cs_piai.group_cs_direction,1,1,1,1
+access_piai_discharge_psychology,PIAI Discharge Psychology,model_cs_piai_discharge_plan,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_discharge_social,PIAI Discharge Social,model_cs_piai_discharge_plan,cs_piai.group_cs_social,1,1,1,0
+access_piai_discharge_user,PIAI Discharge User,model_cs_piai_discharge_plan,base.group_user,1,0,0,0
+access_piai_print_wizard_user,PIAI Print Wizard User,model_cs_piai_print_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_cs_piai_full" model="ir.actions.report">
+            <field name="name">PIAI Completo</field>
+            <field name="model">cs.piai</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cs_piai.report_piai_full_document</field>
+            <field name="print_report_name">'PIAI-%s' % object.name</field>
+            <field name="binding_model_id" ref="cs_piai.model_cs_piai"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_piai_full_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="piai">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Plan Individualizado de Atención Integral</h2>
+                            <h3><t t-esc="piai.name"/> — <t t-esc="piai.resident_id.name"/></h3>
+                            <hr/>
+                            <table class="table table-sm">
+                                <tr><td><strong>Referente</strong></td><td><t t-esc="piai.referent_id.name"/></td>
+                                    <td><strong>Fase</strong></td><td><t t-esc="dict(piai.fields_get(['therapeutic_phase'])['therapeutic_phase']['selection']).get(piai.therapeutic_phase, '')"/></td></tr>
+                                <tr><td><strong>Elaboración</strong></td><td><t t-esc="piai.date_elaboration"/></td>
+                                    <td><strong>Próx. Revisión</strong></td><td><t t-esc="piai.date_next_review"/></td></tr>
+                                <tr><td><strong>Estado</strong></td><td><t t-esc="dict(piai.fields_get(['state'])['state']['selection']).get(piai.state, '')"/></td>
+                                    <td><strong>Versión</strong></td><td><t t-esc="piai.version"/></td></tr>
+                            </table>
+
+                            <t t-if="piai.general_observations">
+                                <h4>Observaciones Generales</h4>
+                                <p><t t-esc="piai.general_observations"/></p>
+                            </t>
+
+                            <t t-if="piai.assessment_ids">
+                                <h4>Valoraciones Iniciales</h4>
+                                <t t-foreach="piai.assessment_ids" t-as="assessment">
+                                    <h5><t t-esc="dict(assessment.fields_get(['area_type'])['area_type']['selection']).get(assessment.area_type, '')"/></h5>
+                                    <p><strong>Profesional:</strong> <t t-esc="assessment.professional_id.name"/></p>
+                                    <t t-if="assessment.detected_risks">
+                                        <p><strong>Riesgos detectados:</strong> <t t-esc="assessment.detected_risks"/></p>
+                                    </t>
+                                    <t t-if="assessment.detected_needs">
+                                        <p><strong>Necesidades detectadas:</strong> <t t-esc="assessment.detected_needs"/></p>
+                                    </t>
+                                </t>
+                            </t>
+
+                            <t t-if="piai.objective_ids">
+                                <h4>Objetivos Terapéuticos</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr>
+                                        <th>Área</th><th>Objetivo</th><th>Estado</th>
+                                        <th>Responsable</th><th>F. Prevista</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.objective_ids" t-as="obj">
+                                            <tr>
+                                                <td><t t-esc="dict(obj.fields_get(['area'])['area']['selection']).get(obj.area, '')"/></td>
+                                                <td><t t-esc="obj.name"/></td>
+                                                <td><t t-esc="dict(obj.fields_get(['state'])['state']['selection']).get(obj.state, '')"/></td>
+                                                <td><t t-esc="obj.responsible_id.name"/></td>
+                                                <td><t t-esc="obj.expected_date"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <t t-if="piai.intervention_ids">
+                                <h4>Intervenciones</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr>
+                                        <th>Área</th><th>Tipo</th><th>Frecuencia</th>
+                                        <th>Responsable</th><th>Estado</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.intervention_ids" t-as="interv">
+                                            <tr>
+                                                <td><t t-esc="dict(interv.fields_get(['area'])['area']['selection']).get(interv.area, '')"/></td>
+                                                <td><t t-esc="dict(interv.fields_get(['intervention_type'])['intervention_type']['selection']).get(interv.intervention_type, '')"/></td>
+                                                <td><t t-esc="dict(interv.fields_get(['frequency'])['frequency']['selection']).get(interv.frequency, '')"/></td>
+                                                <td><t t-esc="interv.responsible_id.name"/></td>
+                                                <td><t t-esc="dict(interv.fields_get(['state'])['state']['selection']).get(interv.state, '')"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <t t-if="piai.risk_ids">
+                                <h4>Riesgos y Alertas Clínicas</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr>
+                                        <th>Tipo</th><th>Nivel</th><th>Estado</th>
+                                        <th>Medidas Preventivas</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.risk_ids" t-as="risk">
+                                            <tr t-attf-style="#{risk.level == 'critical' and 'background-color: #ffd7d7;' or ''}">
+                                                <td><t t-esc="dict(risk.fields_get(['risk_type'])['risk_type']['selection']).get(risk.risk_type, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['level'])['level']['selection']).get(risk.level, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['state'])['state']['selection']).get(risk.state, '')"/></td>
+                                                <td><t t-esc="risk.preventive_measures"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <t t-if="piai.review_ids">
+                                <h4>Revisiones</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr>
+                                        <th>Fecha</th><th>Tipo</th><th>Evolución Global</th>
+                                        <th>Próxima Revisión</th><th>Validado por</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.review_ids" t-as="review">
+                                            <tr>
+                                                <td><t t-esc="review.review_date"/></td>
+                                                <td><t t-esc="dict(review.fields_get(['review_type'])['review_type']['selection']).get(review.review_type, '')"/></td>
+                                                <td><t t-esc="dict(review.fields_get(['overall_evolution'])['overall_evolution']['selection']).get(review.overall_evolution, '')"/></td>
+                                                <td><t t-esc="review.next_review_date"/></td>
+                                                <td><t t-esc="review.validated_by.name"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <p class="text-muted" style="margin-top:2em; font-size:0.8em;">
+                                Documento generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            </p>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

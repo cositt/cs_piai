@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_cs_piai_audit" model="ir.actions.report">
+            <field name="name">PIAI — Inspección / Auditoría</field>
+            <field name="model">cs.piai</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cs_piai.report_piai_audit_document</field>
+            <field name="print_report_name">'PIAI-Auditoria-%s' % object.name</field>
+            <field name="binding_model_id" ref="cs_piai.model_cs_piai"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_piai_audit_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="piai">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>PIAI — Informe para Inspección / Auditoría</h2>
+                            <h3><t t-esc="piai.name"/> — <t t-esc="piai.resident_id.name"/></h3>
+                            <p class="text-muted">Generado el: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></p>
+                            <hr/>
+
+                            <!-- Datos identificativos -->
+                            <h4>1. Datos Identificativos</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr><td><strong>Residente</strong></td><td><t t-esc="piai.resident_id.name"/></td>
+                                    <td><strong>Referencia PIAI</strong></td><td><t t-esc="piai.name"/></td></tr>
+                                <tr><td><strong>Profesional Referente</strong></td><td><t t-esc="piai.referent_id.name or '—'"/></td>
+                                    <td><strong>Versión</strong></td><td><t t-esc="piai.version"/></td></tr>
+                                <tr><td><strong>Fase Terapéutica</strong></td>
+                                    <td><t t-esc="dict(piai.fields_get(['therapeutic_phase'])['therapeutic_phase']['selection']).get(piai.therapeutic_phase, '')"/></td>
+                                    <td><strong>Estado</strong></td>
+                                    <td><t t-esc="dict(piai.fields_get(['state'])['state']['selection']).get(piai.state, '')"/></td></tr>
+                                <tr><td><strong>Fecha de Elaboración</strong></td><td><t t-esc="piai.date_elaboration"/></td>
+                                    <td><strong>Próxima Revisión</strong></td><td><t t-esc="piai.date_next_review or '—'"/></td></tr>
+                            </table>
+
+                            <!-- Cumplimiento de criterios legales -->
+                            <h4>2. Verificación de Criterios Obligatorios</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead><tr><th>Criterio</th><th>Estado</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Residente asociado</td>
+                                        <td><t t-if="piai.resident_id">✓ Cumple</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Profesional referente</td>
+                                        <td><t t-if="piai.referent_id">✓ Cumple</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Fase terapéutica definida</td>
+                                        <td><t t-if="piai.therapeutic_phase">✓ Cumple</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Valoración inicial registrada</td>
+                                        <td><t t-if="piai.assessment_ids">✓ Cumple (<t t-esc="len(piai.assessment_ids)"/> áreas)</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Objetivos terapéuticos definidos</td>
+                                        <td><t t-if="piai.objective_ids">✓ Cumple (<t t-esc="len(piai.objective_ids)"/> objetivos)</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Intervenciones planificadas</td>
+                                        <td><t t-if="piai.intervention_ids">✓ Cumple (<t t-esc="len(piai.intervention_ids)"/> intervenciones)</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Fecha próxima revisión</td>
+                                        <td><t t-if="piai.date_next_review">✓ Cumple</t><t t-else="">✗ Incumple</t></td></tr>
+                                    <tr><td>Plan prevención de recaídas</td>
+                                        <td><t t-if="piai.relapse_prevention_id">✓ Cumple</t><t t-else="">— No registrado</t></td></tr>
+                                    <tr><td>Plan de alta</td>
+                                        <td><t t-if="piai.discharge_plan_id">✓ Cumple</t><t t-else="">— No registrado</t></td></tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Revisiones realizadas -->
+                            <h4>3. Trazabilidad de Revisiones (<t t-esc="len(piai.review_ids)"/> registradas)</h4>
+                            <t t-if="piai.review_ids">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Fecha</th><th>Tipo</th><th>Evolución Global</th><th>Validado por</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.review_ids" t-as="rev">
+                                            <tr>
+                                                <td><t t-esc="rev.review_date"/></td>
+                                                <td><t t-esc="dict(rev.fields_get(['review_type'])['review_type']['selection']).get(rev.review_type, '')"/></td>
+                                                <td><t t-esc="dict(rev.fields_get(['overall_evolution'])['overall_evolution']['selection']).get(rev.overall_evolution, '—')"/></td>
+                                                <td><t t-esc="rev.validated_by.name or '—'"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else=""><p class="text-muted">Sin revisiones registradas.</p></t>
+
+                            <!-- Objetivos completos -->
+                            <h4>4. Objetivos Terapéuticos (<t t-esc="len(piai.objective_ids)"/>)</h4>
+                            <t t-if="piai.objective_ids">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Área</th><th>Objetivo</th><th>Estado</th><th>Responsable</th><th>F. Prevista</th><th>F. Real</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.objective_ids" t-as="obj">
+                                            <tr>
+                                                <td><t t-esc="dict(obj.fields_get(['area'])['area']['selection']).get(obj.area, '')"/></td>
+                                                <td><t t-esc="obj.name"/></td>
+                                                <td><t t-esc="dict(obj.fields_get(['state'])['state']['selection']).get(obj.state, '')"/></td>
+                                                <td><t t-esc="obj.responsible_id.name or '—'"/></td>
+                                                <td><t t-esc="obj.expected_date or '—'"/></td>
+                                                <td><t t-esc="obj.actual_date or '—'"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <!-- Riesgos y alertas -->
+                            <h4>5. Riesgos y Alertas Clínicas (<t t-esc="len(piai.risk_ids)"/>)</h4>
+                            <t t-if="piai.risk_ids">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Tipo</th><th>Nivel</th><th>Estado</th><th>Responsable</th><th>F. Identificación</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="piai.risk_ids" t-as="risk">
+                                            <tr>
+                                                <td><t t-esc="dict(risk.fields_get(['risk_type'])['risk_type']['selection']).get(risk.risk_type, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['level'])['level']['selection']).get(risk.level, '')"/></td>
+                                                <td><t t-esc="dict(risk.fields_get(['state'])['state']['selection']).get(risk.state, '')"/></td>
+                                                <td><t t-esc="risk.responsible_id.name or '—'"/></td>
+                                                <td><t t-esc="risk.date_start"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <!-- Trazabilidad del chatter -->
+                            <h4>6. Historial de Cambios de Estado</h4>
+                            <t t-set="messages" t-value="piai.message_ids.filtered(lambda m: m.tracking_value_ids)"/>
+                            <t t-if="messages">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Fecha</th><th>Usuario</th><th>Campo</th><th>Valor anterior</th><th>Valor nuevo</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="messages" t-as="msg">
+                                            <t t-foreach="msg.tracking_value_ids" t-as="track">
+                                                <tr>
+                                                    <td><t t-esc="msg.date"/></td>
+                                                    <td><t t-esc="msg.author_id.name"/></td>
+                                                    <td><t t-esc="track.field_desc"/></td>
+                                                    <td><t t-esc="track.old_value_char or track.old_value_text or '—'"/></td>
+                                                    <td><t t-esc="track.new_value_char or track.new_value_text or '—'"/></td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else=""><p class="text-muted">Sin cambios de estado registrados.</p></t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

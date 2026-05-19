@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_cs_piai_discharge" model="ir.actions.report">
+            <field name="name">PIAI — Plan de Alta</field>
+            <field name="model">cs.piai</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cs_piai.report_piai_discharge_document</field>
+            <field name="print_report_name">'PIAI-Alta-%s' % object.name</field>
+            <field name="binding_model_id" ref="cs_piai.model_cs_piai"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_piai_discharge_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="piai">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Plan de Alta — PIAI</h2>
+                            <h3><t t-esc="piai.resident_id.name"/></h3>
+                            <hr/>
+
+                            <t t-if="not piai.discharge_plan_id">
+                                <div class="alert alert-warning">
+                                    No hay plan de alta registrado para este PIAI.
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <table class="table table-sm">
+                                    <tr><td><strong>Tipo de Alta</strong></td>
+                                        <td><t t-esc="dict(piai.discharge_plan_id.fields_get(['discharge_type'])['discharge_type']['selection']).get(piai.discharge_plan_id.discharge_type, '')"/></td>
+                                        <td><strong>Fecha Prevista</strong></td>
+                                        <td><t t-esc="piai.discharge_plan_id.expected_date"/></td></tr>
+                                    <tr><td><strong>Residente Firma</strong></td>
+                                        <td><t t-esc="'Sí' if piai.discharge_plan_id.user_signed else 'No'"/></td>
+                                        <td><strong>Familia Informada</strong></td>
+                                        <td><t t-esc="'Sí' if piai.discharge_plan_id.family_informed else 'No'"/></td></tr>
+                                    <t t-if="piai.discharge_plan_id.referral_resource">
+                                        <tr><td><strong>Recurso de Derivación</strong></td>
+                                            <td colspan="3"><t t-esc="piai.discharge_plan_id.referral_resource"/> — <t t-esc="piai.discharge_plan_id.referral_contact"/></td></tr>
+                                    </t>
+                                </table>
+
+                                <t t-if="piai.discharge_plan_id.achieved_objectives">
+                                    <h4>Objetivos Conseguidos</h4>
+                                    <p><t t-esc="piai.discharge_plan_id.achieved_objectives"/></p>
+                                </t>
+                                <t t-if="piai.discharge_plan_id.pending_objectives">
+                                    <h4>Objetivos Pendientes</h4>
+                                    <p><t t-esc="piai.discharge_plan_id.pending_objectives"/></p>
+                                </t>
+                                <t t-if="piai.discharge_plan_id.continuity_treatment">
+                                    <h4>Plan de Tratamiento de Continuidad</h4>
+                                    <p><t t-esc="piai.discharge_plan_id.continuity_treatment"/></p>
+                                </t>
+                                <t t-if="piai.discharge_plan_id.follow_up_plan">
+                                    <h4>Plan de Seguimiento Post-Alta</h4>
+                                    <p><t t-esc="piai.discharge_plan_id.follow_up_plan"/></p>
+                                </t>
+                                <t t-if="piai.discharge_plan_id.recommendations">
+                                    <h4>Recomendaciones</h4>
+                                    <p><t t-esc="piai.discharge_plan_id.recommendations"/></p>
+                                </t>
+
+                                <t t-if="piai.discharge_plan_id.medication_at_discharge">
+                                    <h4>Medicación al Alta</h4>
+                                    <ul>
+                                        <t t-foreach="piai.discharge_plan_id.medication_at_discharge" t-as="drug">
+                                            <li><t t-esc="drug.name"/> (<t t-esc="drug.galenical_form"/> — <t t-esc="drug.route"/>)</li>
+                                        </t>
+                                    </ul>
+                                </t>
+                            </t>
+
+                            <div style="margin-top: 4em;">
+                                <table class="table" style="border:none;">
+                                    <tr>
+                                        <td style="width:50%; text-align:center; border:none;">
+                                            <p>___________________________</p>
+                                            <p>Firma del Residente</p>
+                                            <p><t t-esc="piai.resident_id.name"/></p>
+                                        </td>
+                                        <td style="width:50%; text-align:center; border:none;">
+                                            <p>___________________________</p>
+                                            <p>Profesional Referente</p>
+                                            <p><t t-esc="piai.referent_id.name"/></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <p class="text-muted" style="margin-top:2em; font-size:0.8em;">
+                                Generado el <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                            </p>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
