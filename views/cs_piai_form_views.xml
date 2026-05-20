@@ -115,14 +115,39 @@
 
                         <!-- Smart buttons -->
                         <div class="oe_button_box" name="button_box">
-                            <button name="action_view_evolutions" type="object"
-                                    class="oe_stat_button" icon="fa-pencil">
+                            <button name="action_view_objectives" type="object"
+                                    class="oe_stat_button" icon="fa-check-square-o">
                                 <field name="objective_count" widget="statinfo" string="Objetivos"/>
                             </button>
                             <button name="action_view_evolutions" type="object"
                                     class="oe_stat_button" icon="fa-exclamation-triangle"
                                     invisible="active_risk_count == 0">
                                 <field name="active_risk_count" widget="statinfo" string="Riesgos"/>
+                            </button>
+                            <button name="action_view_consultations" type="object"
+                                    class="oe_stat_button" icon="fa-stethoscope"
+                                    invisible="medical_consultation_count == 0">
+                                <field name="medical_consultation_count" widget="statinfo" string="Consultas"/>
+                            </button>
+                            <button name="action_view_prescriptions" type="object"
+                                    class="oe_stat_button" icon="fa-medkit"
+                                    invisible="prescription_count == 0">
+                                <field name="prescription_count" widget="statinfo" string="Prescripciones"/>
+                            </button>
+                            <button name="action_view_rescues" type="object"
+                                    class="oe_stat_button" icon="fa-ambulance"
+                                    invisible="rescue_count == 0">
+                                <field name="rescue_count" widget="statinfo" string="Rescates"/>
+                            </button>
+                            <button name="action_view_psychology_sessions" type="object"
+                                    class="oe_stat_button" icon="fa-comments"
+                                    invisible="psychology_session_count == 0">
+                                <field name="psychology_session_count" widget="statinfo" string="Sesiones Psic."/>
+                            </button>
+                            <button name="action_view_family_calls" type="object"
+                                    class="oe_stat_button" icon="fa-phone"
+                                    invisible="family_call_count == 0">
+                                <field name="family_call_count" widget="statinfo" string="Llamadas Fam."/>
                             </button>
                         </div>
 
@@ -140,7 +165,17 @@
                             </group>
                             <group string="Fechas">
                                 <field name="date_elaboration"/>
+                                <field name="date_admission" readonly="1"/>
                                 <field name="date_next_review"/>
+                            </group>
+                        </group>
+                        <group string="Consentimiento LOPD">
+                            <group>
+                                <field name="lopd_consent"/>
+                                <field name="lopd_consent_date" invisible="not lopd_consent"/>
+                            </group>
+                            <group col="1">
+                                <field name="lopd_notes" placeholder="Observaciones sobre protección de datos..."/>
                             </group>
                         </group>
                         <group string="Observaciones Generales" col="1">
@@ -236,34 +271,42 @@
                                 </field>
                             </page>
                             <page string="Prevención de Recaídas" name="relapse">
-                                <field name="relapse_prevention_id" context="{'default_piai_id': id}">
-                                    <form>
-                                        <sheet>
-                                            <group>
-                                                <group col="1">
-                                                    <field name="high_risk_situations" placeholder="Situaciones de alto riesgo..."/>
-                                                </group>
-                                                <group col="1">
-                                                    <field name="warning_signs" placeholder="Señales de aviso tempranas..."/>
-                                                </group>
-                                            </group>
-                                            <group>
-                                                <group col="1">
-                                                    <field name="coping_strategies" placeholder="Estrategias de afrontamiento..."/>
-                                                </group>
-                                                <group col="1">
-                                                    <field name="social_support_plan" placeholder="Plan de apoyo social..."/>
-                                                </group>
-                                            </group>
-                                            <group>
-                                                <field name="psychoeducation_completed"/>
-                                                <field name="emergency_contacts"/>
-                                            </group>
-                                            <group col="1">
-                                                <field name="action_plan_relapse" placeholder="Plan de actuación ante recaída..."/>
-                                            </group>
-                                        </sheet>
-                                    </form>
+                                <field name="relapse_prevention_ids" context="{'default_piai_id': id}">
+                                    <list string="Plan de Prevención de Recaídas">
+                                        <field name="high_risk_situations" string="Situaciones de alto riesgo"/>
+                                        <field name="warning_signs" string="Señales de aviso" optional="hide"/>
+                                        <field name="coping_strategies" string="Estrategias de afrontamiento" optional="hide"/>
+                                        <field name="psychoeducation_completed" string="Psicoeducación" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Diagnóstico" name="diagnosis">
+                                <field name="diagnosis_ids" context="{'default_piai_id': id}">
+                                    <list string="Diagnóstico / Formulación del caso">
+                                        <field name="main_diagnosis" string="Diagnóstico Principal"/>
+                                        <field name="cie10_code" string="CIE-10"/>
+                                        <field name="dsm5_code" string="DSM-5" optional="hide"/>
+                                        <field name="prognosis" string="Pronóstico" widget="badge"
+                                               decoration-success="prognosis == 'favorable'"
+                                               decoration-warning="prognosis == 'reserved'"
+                                               decoration-danger="prognosis == 'unfavorable'"/>
+                                        <field name="dual_pathology" string="Pat. Dual" widget="boolean_toggle"/>
+                                        <field name="professional_id" string="Profesional" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Plan Familiar y Social" name="family_plan">
+                                <field name="family_plan_ids" context="{'default_piai_id': id}">
+                                    <list string="Plan Familiar y Social">
+                                        <field name="family_involvement_level" string="Implicación familiar" widget="badge"
+                                               decoration-success="family_involvement_level == 'high'"
+                                               decoration-warning="family_involvement_level == 'medium'"
+                                               decoration-muted="family_involvement_level in ['low','none']"/>
+                                        <field name="family_sessions_frequency" string="Frecuencia sesiones"/>
+                                        <field name="next_family_session" string="Próxima sesión"/>
+                                        <field name="responsible_worker_id" string="T. Social"/>
+                                        <field name="restrictions_calls" string="Restricc. llamadas" optional="hide"/>
+                                    </list>
                                 </field>
                             </page>
                             <page string="Plan de Alta" name="discharge"
@@ -272,6 +315,79 @@
                                     <field name="discharge_plan_id" string="Plan de Alta"
                                            context="{'default_piai_id': id}"/>
                                 </group>
+                            </page>
+                            <page string="Firmas y Validaciones" name="signatures">
+                                <field name="signature_ids">
+                                    <list editable="bottom">
+                                        <field name="signature_type" string="Tipo"/>
+                                        <field name="worker_id" string="Profesional"/>
+                                        <field name="date_signed" string="Fecha"/>
+                                        <field name="resident_signs" string="Residente"/>
+                                        <field name="family_signs" string="Familia/Tutor"/>
+                                        <field name="validated" string="Validado" widget="boolean_toggle"/>
+                                        <field name="notes" string="Observaciones" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- ─── Historial clínico cruzado (solo lectura, datos vivos de otros módulos) -->
+                            <page string="Consultas Médicas" name="cross_consultations">
+                                <field name="medical_consultation_ids" readonly="1" nolabel="1">
+                                    <list string="Consultas Médicas" create="false" delete="false">
+                                        <field name="name" string="Referencia"/>
+                                        <field name="consultation_date" string="Fecha"/>
+                                        <field name="consultation_type" string="Tipo"/>
+                                        <field name="medical_professional_id" string="Médico"/>
+                                        <field name="diagnosis" string="Diagnóstico" optional="show"/>
+                                        <field name="state" string="Estado" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Prescripciones" name="cross_prescriptions">
+                                <field name="prescription_ids" readonly="1" nolabel="1">
+                                    <list string="Prescripciones" create="false" delete="false">
+                                        <field name="name" string="Referencia"/>
+                                        <field name="prescription_date" string="Fecha"/>
+                                        <field name="medical_professional_id" string="Médico"/>
+                                        <field name="state" string="Estado" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Rescates e Intervenciones" name="cross_rescues">
+                                <field name="rescue_ids" readonly="1" nolabel="1">
+                                    <list string="Rescates" create="false" delete="false">
+                                        <field name="name" string="Referencia"/>
+                                        <field name="intervention_datetime" string="Fecha"/>
+                                        <field name="scenario_type" string="Escenario"/>
+                                        <field name="outcome" string="Desenlace" widget="badge"/>
+                                        <field name="reporter_id" string="Notificado por"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Sesiones Psicología" name="cross_psychology">
+                                <field name="psychology_session_ids" readonly="1" nolabel="1">
+                                    <list string="Sesiones" create="false" delete="false">
+                                        <field name="name" string="Referencia"/>
+                                        <field name="session_date" string="Fecha"/>
+                                        <field name="session_type" string="Tipo"/>
+                                        <field name="psychologist_id" string="Psicólogo/a"/>
+                                        <field name="duration_minutes" string="Duración (min)"/>
+                                        <field name="state" string="Estado" widget="badge"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Llamadas Familiares" name="cross_family_calls"
+                                  invisible="family_call_count == 0">
+                                <field name="family_call_ids" readonly="1" nolabel="1">
+                                    <list string="Llamadas" create="false" delete="false">
+                                        <field name="call_datetime" string="Fecha"/>
+                                        <field name="contacted_name" string="Persona contactada"/>
+                                        <field name="relationship" string="Relación"/>
+                                        <field name="channel" string="Canal"/>
+                                        <field name="outcome" string="Resultado" widget="badge"/>
+                                        <field name="staff_id" string="Registrado por"/>
+                                    </list>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>

@@ -50,3 +50,21 @@ access_piai_discharge_psychology,PIAI Discharge Psychology,model_cs_piai_dischar
 access_piai_discharge_social,PIAI Discharge Social,model_cs_piai_discharge_plan,cs_piai.group_cs_social,1,1,1,0
 access_piai_discharge_user,PIAI Discharge User,model_cs_piai_discharge_plan,base.group_user,1,0,0,0
 access_piai_print_wizard_user,PIAI Print Wizard User,model_cs_piai_print_wizard,base.group_user,1,1,1,1
+access_piai_signature_direction,PIAI Signature Direction,model_cs_piai_signature,cs_piai.group_cs_direction,1,1,1,1
+access_piai_signature_psychology,PIAI Signature Psychology,model_cs_piai_signature,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_signature_social,PIAI Signature Social,model_cs_piai_signature,cs_piai.group_cs_social,1,1,1,0
+access_piai_signature_medical,PIAI Signature Medical,model_cs_piai_signature,cs_piai.group_cs_medical,1,1,1,0
+access_piai_signature_monitor,PIAI Signature Monitor,model_cs_piai_signature,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_signature_user,PIAI Signature User,model_cs_piai_signature,base.group_user,1,0,0,0
+access_piai_diagnosis_direction,PIAI Diagnosis Direction,model_cs_piai_diagnosis,cs_piai.group_cs_direction,1,1,1,1
+access_piai_diagnosis_psychology,PIAI Diagnosis Psychology,model_cs_piai_diagnosis,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_diagnosis_social,PIAI Diagnosis Social,model_cs_piai_diagnosis,cs_piai.group_cs_social,1,1,1,0
+access_piai_diagnosis_medical,PIAI Diagnosis Medical,model_cs_piai_diagnosis,cs_piai.group_cs_medical,1,1,1,0
+access_piai_diagnosis_monitor,PIAI Diagnosis Monitor,model_cs_piai_diagnosis,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_diagnosis_user,PIAI Diagnosis User,model_cs_piai_diagnosis,base.group_user,1,0,0,0
+access_piai_family_plan_direction,PIAI FamilyPlan Direction,model_cs_piai_family_plan,cs_piai.group_cs_direction,1,1,1,1
+access_piai_family_plan_psychology,PIAI FamilyPlan Psychology,model_cs_piai_family_plan,cs_piai.group_cs_psychology,1,1,1,0
+access_piai_family_plan_social,PIAI FamilyPlan Social,model_cs_piai_family_plan,cs_piai.group_cs_social,1,1,1,0
+access_piai_family_plan_medical,PIAI FamilyPlan Medical,model_cs_piai_family_plan,cs_piai.group_cs_medical,1,1,1,0
+access_piai_family_plan_monitor,PIAI FamilyPlan Monitor,model_cs_piai_family_plan,cs_piai.group_cs_monitor,1,0,0,0
+access_piai_family_plan_user,PIAI FamilyPlan User,model_cs_piai_family_plan,base.group_user,1,0,0,0

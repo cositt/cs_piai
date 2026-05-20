@@ -30,7 +30,7 @@
                         </group>
 
                         <notebook>
-                            <page string="Alertas y Restricciones" name="alerts">
+                            <page string="Alertas Clínicas" name="alerts">
                                 <field name="risk_ids" readonly="1"
                                        domain="[('level', 'in', ['medium','high','critical']), ('state','=','active')]">
                                     <list create="false" delete="false">
@@ -41,6 +41,28 @@
                                         <field name="preventive_measures" string="Indicaciones"/>
                                     </list>
                                 </field>
+                            </page>
+                            <page string="Restricciones Operativas" name="restrictions">
+                                <group string="Llamadas">
+                                    <field name="restrictions_calls" readonly="1" nolabel="1"
+                                           placeholder="Sin restricciones registradas"/>
+                                </group>
+                                <group string="Visitas">
+                                    <field name="restrictions_visits" readonly="1" nolabel="1"
+                                           placeholder="Sin restricciones registradas"/>
+                                </group>
+                                <group string="Salidas">
+                                    <field name="restrictions_outings" readonly="1" nolabel="1"
+                                           placeholder="Sin restricciones registradas"/>
+                                </group>
+                                <group string="Objetos personales">
+                                    <field name="restrictions_objects" readonly="1" nolabel="1"
+                                           placeholder="Sin restricciones registradas"/>
+                                </group>
+                                <group string="Medicación autoadministrada">
+                                    <field name="restrictions_medication" readonly="1" nolabel="1"
+                                           placeholder="Sin restricciones registradas"/>
+                                </group>
                             </page>
                             <page string="Objetivos Convivenciales" name="coexistence">
                                 <field name="objective_ids" readonly="1"

@@ -40,5 +40,5 @@
         'reports/cs_piai_report_monthly.xml',
     ],
     'installable': True,
-    'application': False,
+    'application': True,
 }

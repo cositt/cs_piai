@@ -12,6 +12,9 @@ AREA_SELECTION = [
     ('leisure', 'Ocio y Tiempo Libre'),
     ('coexistence', 'Convivencial'),
     ('legal', 'Judicial/Legal'),
+    ('physical_health', 'Actividad física / Hábitos saludables'),
+    ('relapse_prevention', 'Prevención de recaídas'),
+    ('discharge_reintegration', 'Alta / Reinserción'),
     ('spiritual', 'Espiritual/Cultural'),
     ('other', 'Otro'),
 ]

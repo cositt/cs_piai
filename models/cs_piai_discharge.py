@@ -9,7 +9,11 @@ class PiaiDischargePlan(models.Model):
     discharge_type = fields.Selection([
         ('therapeutic', 'Alta Terapéutica'),
         ('voluntary', 'Alta Voluntaria'),
+        ('disciplinary', 'Alta Disciplinaria'),
         ('referral', 'Derivación a otro recurso'),
+        ('medical_transfer', 'Traslado Sanitario'),
+        ('administrative', 'Finalización Administrativa'),
+        ('abandonment', 'Abandono'),
         ('expulsion', 'Expulsión'),
         ('death', 'Exitus'),
     ], string='Tipo de Alta', required=True)

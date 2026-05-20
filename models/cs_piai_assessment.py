@@ -163,6 +163,28 @@ class PiaiAssessment(models.Model):
     family_involved_persons = fields.Text(string='Personas Familiares Implicadas')
     consent_inform_family = fields.Boolean(string='Autoriza Informar a Familia')
     family_dynamics = fields.Text(string='Dinámica Familiar')
+    emergency_contact_name = fields.Char(string='Contacto de emergencia — Nombre')
+    emergency_phone_1 = fields.Char(string='Teléfono emergencia 1')
+    emergency_phone_2 = fields.Char(string='Teléfono emergencia 2')
+
+    # ─── Área Psicológica (campos adicionales) ────────────────────────────
+    psychology_prev_history = fields.Text(string='Historia psicológica previa')
+    self_harm_history = fields.Text(string='Autolesiones (historial)')
+
+    # ─── Área Sanitaria (campos adicionales) ──────────────────────────────
+    clinical_course = fields.Text(string='Curso clínico')
+    lab_analysis = fields.Text(string='Análisis de laboratorio')
+
+    # ─── Área Social (campos adicionales) ────────────────────────────────
+    judicial_background = fields.Text(string='Antecedentes judiciales / penitenciarios')
+    previous_social_resources = fields.Text(string='Recursos sociales previos utilizados')
+
+    # ─── Área Educativa / Ocupacional (campos adicionales) ───────────────
+    lifestyle_habits = fields.Text(string='Hábitos de vida')
+    training_employment_needs = fields.Text(string='Necesidades formativas / laborales')
+
+    # ─── Texto libre genérico por área ────────────────────────────────────
+    notes = fields.Text(string='Observaciones / Texto libre')
 
 
 class SubstanceTag(models.Model):

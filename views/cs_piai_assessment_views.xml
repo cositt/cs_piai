@@ -48,6 +48,8 @@
                                 <field name="secondary_substances"/>
                                 <field name="initial_emotional_state"/>
                                 <field name="clinical_observations"/>
+                                <field name="psychology_prev_history" placeholder="Historia psicológica previa..."/>
+                                <field name="self_harm_history" placeholder="Historial de autolesiones..."/>
                             </group>
                         </group>
 
@@ -62,6 +64,8 @@
                                 <field name="medical_history"/>
                                 <field name="active_pathologies"/>
                                 <field name="allergies_text"/>
+                                <field name="clinical_course" placeholder="Curso clínico..."/>
+                                <field name="lab_analysis" placeholder="Análisis de laboratorio..."/>
                             </group>
                         </group>
 
@@ -86,6 +90,8 @@
                             <group col="1">
                                 <field name="family_situation"/>
                                 <field name="support_network"/>
+                                <field name="judicial_background" placeholder="Antecedentes judiciales / penitenciarios..."/>
+                                <field name="previous_social_resources" placeholder="Recursos sociales previos utilizados..."/>
                             </group>
                         </group>
 
@@ -96,12 +102,19 @@
                                 <field name="social_skills"/>
                                 <field name="personal_autonomy"/>
                             </group>
+                            <group col="1">
+                                <field name="lifestyle_habits" placeholder="Hábitos de vida..."/>
+                                <field name="training_employment_needs" placeholder="Necesidades formativas / laborales..."/>
+                            </group>
                         </group>
 
                         <!-- Área Familiar -->
                         <group string="Valoración Familiar" invisible="area_type != 'family'">
                             <group>
                                 <field name="consent_inform_family"/>
+                                <field name="emergency_contact_name"/>
+                                <field name="emergency_phone_1"/>
+                                <field name="emergency_phone_2"/>
                             </group>
                             <group col="1">
                                 <field name="family_involved_persons"/>

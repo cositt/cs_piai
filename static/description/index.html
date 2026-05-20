@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #5c2d91; border-bottom: 3px solid #5c2d91; padding-bottom: 10px; }
+        h2 { color: #5c2d91; margin-top: 30px; border-left: 4px solid #5c2d91; padding-left: 12px; }
+        h3 { color: #7b3fb5; margin-top: 20px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; margin: 2px; }
+        .badge-purple { background: #5c2d91; color: white; }
+        .badge-green  { background: #28a745; color: white; }
+        .badge-orange { background: #fd7e14; color: white; }
+        .badge-red    { background: #dc3545; color: white; }
+        .badge-blue   { background: #007bff; color: white; }
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+        .feature-card { border: 1px solid #e0d0f5; border-radius: 8px; padding: 16px; background: #faf7ff; }
+        .feature-card h3 { margin-top: 0; color: #5c2d91; font-size: 15px; }
+        .feature-card p  { margin: 0; font-size: 13px; color: #555; }
+        .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+        .flow-step { background: #5c2d91; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; }
+        .flow-arrow { color: #5c2d91; font-size: 18px; font-weight: bold; }
+        .alert-box { border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+        .alert-info    { background: #e8f4fd; border-left: 4px solid #007bff; }
+        .alert-warning { background: #fff8e1; border-left: 4px solid #ffc107; }
+        .alert-tip     { background: #e9f7ef; border-left: 4px solid #28a745; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        th { background: #5c2d91; color: white; padding: 8px 12px; text-align: left; }
+        td { border: 1px solid #ddd; padding: 8px 12px; }
+        tr:nth-child(even) td { background: #f9f5ff; }
+        .checklist li { margin: 4px 0; }
+        .checklist li::marker { color: #5c2d91; }
+        code { background: #f0e8ff; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #5c2d91; }
+        .section-intro { color: #666; font-size: 14px; margin-bottom: 16px; }
+        .role-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin: 1px; }
+        .role-dir  { background: #5c2d91; color: white; }
+        .role-psy  { background: #007bff; color: white; }
+        .role-soc  { background: #28a745; color: white; }
+        .role-med  { background: #17a2b8; color: white; }
+        .role-mon  { background: #fd7e14; color: white; }
+        .role-adm  { background: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>📋 PIAI — Plan Individualizado de Atención Integral</h1>
+<p class="section-intro">
+    Módulo de gestión clínica del PIAI/PTI para el Centro AEQUILIBRIUM (Odoo 19 Enterprise).
+    Cubre el ciclo de vida completo del plan terapéutico de cada residente, desde la admisión hasta el alta.
+</p>
+
+<div class="alert-box alert-info">
+    <strong>Versión 19.0.1.0.0</strong> · Requiere: <code>cs_resident</code>, <code>cs_medical_care</code>,
+    <code>cs_psychology</code>, <code>cs_cima</code>, <code>cs_admission</code>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>1. ¿Qué hace este módulo?</h2>
+
+<div class="feature-grid">
+    <div class="feature-card">
+        <h3>📝 Creación automática</h3>
+        <p>Al cerrar una admisión, el sistema crea automáticamente un PIAI en estado Borrador asociado al residente.</p>
+    </div>
+    <div class="feature-card">
+        <h3>🔄 Ciclo de vida completo</h3>
+        <p>Borrador → Pendiente de Validación → Activo → En Revisión → Cerrado (4 tipos de cierre).</p>
+    </div>
+    <div class="feature-card">
+        <h3>🗂️ Estructura multisección</h3>
+        <p>10 pestañas: Valoraciones, Diagnóstico, Objetivos, Intervenciones, Riesgos, Evolución, Revisiones, Prevención, Plan Familiar y Alta.</p>
+    </div>
+    <div class="feature-card">
+        <h3>🖨️ 5 tipos de PDF</h3>
+        <p>Completo, Resumen equipo, Inspección/Auditoría, Evolución mensual y Plan de Alta — accesibles con el botón <strong>Imprimir</strong>.</p>
+    </div>
+    <div class="feature-card">
+        <h3>⚠️ Alertas automáticas</h3>
+        <p>Cron diario que avisa de revisiones vencidas, riesgos críticos sin revisar, objetivos atrasados y más.</p>
+    </div>
+    <div class="feature-card">
+        <h3>👥 Acceso por perfil</h3>
+        <p>6 grupos: Dirección, Psicología, Trabajo Social, Médico/Enfermería, Monitoras y Administración.</p>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>2. Flujo de trabajo principal</h2>
+
+<div class="flow">
+    <span class="flow-step">1. Admisión cerrada</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">2. PIAI Borrador creado</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">3. Rellenar secciones</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">4. Enviar a Validación</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">5. Activar PIAI</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">6. Revisiones periódicas</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">7. Cerrar con Alta</span>
+</div>
+
+<div class="alert-box alert-warning">
+    <strong>Para activar un PIAI</strong> debe tener: profesional referente, fase terapéutica, al menos una valoración inicial, al menos un objetivo, al menos una intervención y fecha de próxima revisión.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>3. Estados del PIAI</h2>
+
+<table>
+    <tr><th>Estado</th><th>Descripción</th><th>Quién puede cambiar</th></tr>
+    <tr><td><span class="badge badge-blue">Borrador</span></td><td>PIAI recién creado, en edición libre.</td><td>Psicología, Dirección</td></tr>
+    <tr><td><span class="badge badge-orange">Pendiente de Validación</span></td><td>Enviado para revisión y aprobación.</td><td>Dirección</td></tr>
+    <tr><td><span class="badge badge-green">Activo</span></td><td>PIAI vigente. Solo puede haber uno activo por residente.</td><td>Dirección</td></tr>
+    <tr><td><span class="badge badge-orange">En Revisión</span></td><td>En proceso de revisión periódica.</td><td>Dirección, Psicología</td></tr>
+    <tr><td><span class="badge badge-red">Cerrado</span></td><td>Alta terapéutica, voluntaria, derivación o expulsión.</td><td>Dirección</td></tr>
+</table>
+
+<p>
+    <strong>Reabrir un PIAI cerrado:</strong> Solo Dirección puede usar el botón
+    <span class="badge badge-orange">Reabrir — Volver a Activo</span> (requiere confirmación).
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>4. Secciones del formulario</h2>
+
+<h3>📊 Valoraciones Iniciales</h3>
+<p>Registro por áreas: <em>Psicológica, Sanitaria, Psiquiátrica, Social, Educativa, Familiar</em>. Cada área incluye fecha, profesional, prioridad, riesgos detectados, necesidades y texto libre.</p>
+
+<h3>🔬 Diagnóstico / Formulación</h3>
+<p>Diagnóstico principal, código CIE-10 / DSM-5, diagnóstico diferencial, formulación del caso, hipótesis de trabajo y pronóstico.</p>
+
+<h3>🎯 Objetivos Terapéuticos</h3>
+<p>Múltiples objetivos con área, responsable, indicador de seguimiento, fechas y estado: <em>No iniciado → En progreso → Conseguido / Parcialmente conseguido / No conseguido / Suspendido / Reformulado</em>.</p>
+
+<h3>🛠️ Intervenciones</h3>
+<p>Vinculadas a área y objetivos. 17 tipos disponibles (psicoterapia individual, taller educativo, control toxicológico, derivación, etc.), con frecuencia y responsable.</p>
+
+<h3>⚠️ Riesgos y Alertas</h3>
+<p>11 tipos de riesgo (autolítico, heteroagresivo, fuga, recaída, etc.) con nivel (Bajo / Moderado / Alto / Crítico), medidas preventivas y plan de actuación. Los riesgos críticos generan alertas visibles en la ficha del residente.</p>
+
+<h3>📓 Notas de Evolución</h3>
+<p>Entradas de evolución por profesional y área. Tipos: Evolución, Incidencia, Intervención, Coordinación, Familia, Crisis. Cada nota puede marcar "Requiere revisión del PIAI".</p>
+
+<h3>🔁 Revisiones</h3>
+<p>Revisiones ordinarias (mensuales) y extraordinarias. Registro de participantes, evolución global, acuerdos, participación del residente y validación.</p>
+
+<h3>🛡️ Prevención de Recaídas</h3>
+<p>Situaciones de riesgo, señales de aviso, estrategias de afrontamiento, plan de apoyo social, contactos de emergencia y plan de actuación ante recaída.</p>
+
+<h3>👨‍👩‍👧 Plan Familiar y Social</h3>
+<p>Objetivos familiares, psicoeducación, frecuencia de sesiones. Incluye <strong>restricciones operativas</strong> (llamadas, visitas, salidas, objetos, medicación) visibles para monitoras.</p>
+
+<h3>🚪 Plan de Alta</h3>
+<p>Visible solo cuando el PIAI está En Revisión o Cerrado. Recoge tipo de alta (9 opciones), objetivos conseguidos/pendientes, recurso de derivación, plan de continuidad y medicación al alta.</p>
+
+<h3>✍️ Firmas y Validaciones</h3>
+<p>Registro de firmas: validación inicial, revisiones, consentimiento del residente y consentimiento familiar/tutor.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>5. Imprimir documentos PDF</h2>
+
+<p>Con el botón <strong>🖨 Imprimir</strong> (visible en cualquier estado excepto Borrador) se abre un selector con 5 opciones:</p>
+
+<table>
+    <tr><th>Documento</th><th>Contenido</th><th>Uso típico</th></tr>
+    <tr><td><strong>PIAI Completo</strong></td><td>Todas las secciones del PIAI</td><td>Historia clínica, expediente</td></tr>
+    <tr><td><strong>Resumen Equipo</strong></td><td>Resumen operativo sin datos sensibles</td><td>Reuniones de equipo</td></tr>
+    <tr><td><strong>Inspección / Auditoría</strong></td><td>Verificación de criterios + trazabilidad completa de cambios</td><td>Inspecciones, auditorías externas</td></tr>
+    <tr><td><strong>Evolución Mensual</strong></td><td>Notas del mes en curso + estado de objetivos</td><td>Informes mensuales</td></tr>
+    <tr><td><strong>Plan de Alta</strong></td><td>Continuidad asistencial, derivación, medicación</td><td>Alta del residente</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>6. Perfiles de acceso</h2>
+
+<table>
+    <tr><th>Perfil</th><th>Permisos principales</th></tr>
+    <tr><td><span class="role-tag role-dir">Dirección</span></td><td>Acceso total: crear, editar, validar, activar, cerrar, reabrir, exportar PDF, gestionar permisos.</td></tr>
+    <tr><td><span class="role-tag role-psy">Psicología</span></td><td>Crear/editar área psicológica, objetivos psicológicos, evolución, enviar a validación.</td></tr>
+    <tr><td><span class="role-tag role-soc">Trabajo Social</span></td><td>Editar áreas social, familiar, educativa. Objetivos e intervenciones sociales.</td></tr>
+    <tr><td><span class="role-tag role-med">Médico/Enf.</span></td><td>Editar área sanitaria y psiquiátrica, riesgos clínicos, medicación, evolución clínica.</td></tr>
+    <tr><td><span class="role-tag role-mon">Monitoras</span></td><td>Solo lectura. Vista simplificada con alertas, restricciones y objetivos convivenciales. Puede registrar incidencias.</td></tr>
+    <tr><td><span class="role-tag role-adm">Administración</span></td><td>Datos administrativos y adjuntos. Sin acceso a contenido clínico sensible.</td></tr>
+</table>
+
+<div class="alert-box alert-tip">
+    <strong>Nota para monitoras:</strong> Acceder a través del menú <em>PIAI → Residentes — Vista Monitoras</em>. Solo muestra PIAIs activos con las indicaciones operativas del día.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>7. Alertas automáticas (cron diario)</h2>
+
+<ul class="checklist">
+    <li>PIAI en estado Borrador con más de 7 días de antigüedad.</li>
+    <li>Fecha de próxima revisión vencida (PIAI Activo o En Revisión).</li>
+    <li>Riesgo <strong>crítico</strong> sin revisión en las últimas 48 horas.</li>
+    <li>Riesgo <strong>alto</strong> sin revisión en los últimos 7 días.</li>
+    <li>Objetivo en progreso con fecha prevista superada.</li>
+    <li>PIAI con revisión próxima en 30 días sin plan de alta registrado.</li>
+</ul>
+
+<p>Las alertas generan actividades asignadas al administrador del sistema (o usuario del cron).</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>8. Integración con otros módulos</h2>
+
+<table>
+    <tr><th>Módulo</th><th>Integración</th></tr>
+    <tr><td><code>cs_admission</code></td><td>Al cerrar una admisión se crea automáticamente un PIAI en Borrador.</td></tr>
+    <tr><td><code>cs_resident</code></td><td>Smart button PIAI en ficha del residente. Alerta de riesgos críticos activos.</td></tr>
+    <tr><td><code>cs_cima</code></td><td>Medicación al ingreso y al alta vinculada al catálogo AEMPS.</td></tr>
+    <tr><td><code>cs_medical_care</code></td><td>Vinculación con prescripciones y evolución clínica.</td></tr>
+    <tr><td><code>cs_psychology</code></td><td>Acceso a sesiones psicológicas desde el PIAI.</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>9. Preguntas frecuentes</h2>
+
+<p><strong>¿Por qué no puedo activar el PIAI?</strong><br/>
+El sistema valida 7 requisitos antes de activar: referente, fase terapéutica, valoración inicial, al menos un objetivo, al menos una intervención, fecha de próxima revisión y fecha de elaboración.</p>
+
+<p><strong>¿Puedo tener dos PIAI activos para el mismo residente?</strong><br/>
+No. El sistema impide activar un segundo PIAI si ya hay uno activo. Debe cerrar el actual antes de activar uno nuevo.</p>
+
+<p><strong>¿Cómo reabro un PIAI cerrado por error?</strong><br/>
+Solo el perfil Dirección puede usar el botón <em>"Reabrir — Volver a Activo"</em> que aparece en cualquier estado Cerrado.</p>
+
+<p><strong>¿Las revisiones sobrescriben la información anterior?</strong><br/>
+No. Cada revisión se guarda como un registro inmutable independiente, conservando el histórico completo.</p>
+
+<hr/>
+<p style="color:#999; font-size:12px; text-align:center;">
+    cs_piai v19.0.1.0.0 · Centro AEQUILIBRIUM · Desarrollado por Equilibrium
+</p>
+
+</body>
+</html>

@@ -57,14 +57,179 @@ class Piai(models.Model):
     risk_ids = fields.One2many('cs.piai.risk', 'piai_id', string='Riesgos y Alertas')
     review_ids = fields.One2many('cs.piai.review', 'piai_id', string='Revisiones')
     evolution_ids = fields.One2many('cs.piai.evolution', 'piai_id', string='Notas de Evolución')
-    relapse_prevention_id = fields.Many2one(
-        'cs.piai.relapse.prevention', string='Plan de Prevención de Recaídas',
-        ondelete='set null',
-    )
+    relapse_prevention_ids = fields.One2many('cs.piai.relapse.prevention', 'piai_id', string='Plan de Prevención de Recaídas')
     discharge_plan_id = fields.Many2one(
         'cs.piai.discharge.plan', string='Plan de Alta',
         ondelete='set null',
     )
+    diagnosis_ids = fields.One2many('cs.piai.diagnosis', 'piai_id', string='Diagnóstico / Formulación')
+    family_plan_ids = fields.One2many('cs.piai.family.plan', 'piai_id', string='Plan Familiar y Social')
+    signature_ids = fields.One2many('cs.piai.signature', 'piai_id', string='Firmas y Validaciones')
+
+    # ─── Registros cruzados (lectura automática desde otros módulos) ─────────
+    medical_consultation_ids = fields.Many2many(
+        'cs.medical.consultation', compute='_compute_cross_module_records',
+        string='Consultas Médicas')
+    prescription_ids = fields.Many2many(
+        'cs.prescription', compute='_compute_cross_module_records',
+        string='Prescripciones')
+    rescue_ids = fields.Many2many(
+        'cs.medical.rescue', compute='_compute_cross_module_records',
+        string='Rescates e Intervenciones')
+    psychology_session_ids = fields.Many2many(
+        'cs.psychology.session', compute='_compute_cross_module_records',
+        string='Sesiones Psicología')
+    family_call_ids = fields.Many2many(
+        'cs.family.call', compute='_compute_cross_module_records',
+        string='Llamadas Familiares')
+
+    medical_consultation_count = fields.Integer(
+        compute='_compute_cross_module_records', string='Consultas Médicas')
+    prescription_count = fields.Integer(
+        compute='_compute_cross_module_records', string='Prescripciones')
+    rescue_count = fields.Integer(
+        compute='_compute_cross_module_records', string='Rescates')
+    psychology_session_count = fields.Integer(
+        compute='_compute_cross_module_records', string='Sesiones Psicología')
+    family_call_count = fields.Integer(
+        compute='_compute_cross_module_records', string='Llamadas Familiares')
+
+    @api.depends('resident_id')
+    def _compute_cross_module_records(self):
+        for piai in self:
+            rid = piai.resident_id.id
+            if not rid:
+                piai.medical_consultation_ids = self.env['cs.medical.consultation']
+                piai.prescription_ids = self.env['cs.prescription']
+                piai.rescue_ids = self.env['cs.medical.rescue']
+                piai.psychology_session_ids = self.env['cs.psychology.session']
+                piai.family_call_ids = self.env['cs.family.call']
+                piai.medical_consultation_count = 0
+                piai.prescription_count = 0
+                piai.rescue_count = 0
+                piai.psychology_session_count = 0
+                piai.family_call_count = 0
+                continue
+            domain = [('resident_id', '=', rid)]
+            consultations = self.env['cs.medical.consultation'].search(
+                domain, order='consultation_date desc')
+            prescriptions = self.env['cs.prescription'].search(
+                domain, order='prescription_date desc')
+            rescues = self.env['cs.medical.rescue'].search(
+                domain, order='intervention_datetime desc')
+            sessions = self.env['cs.psychology.session'].search(
+                domain, order='session_date desc')
+            calls = self.env['cs.family.call'].search(domain)
+            piai.medical_consultation_ids = consultations
+            piai.prescription_ids = prescriptions
+            piai.rescue_ids = rescues
+            piai.psychology_session_ids = sessions
+            piai.family_call_ids = calls
+            piai.medical_consultation_count = len(consultations)
+            piai.prescription_count = len(prescriptions)
+            piai.rescue_count = len(rescues)
+            piai.psychology_session_count = len(sessions)
+            piai.family_call_count = len(calls)
+
+    def action_view_consultations(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Consultas Médicas — %s') % self.resident_id.name,
+            'res_model': 'cs.medical.consultation',
+            'view_mode': 'list,form',
+            'domain': [('resident_id', '=', self.resident_id.id)],
+            'context': {'default_resident_id': self.resident_id.id},
+        }
+
+    def action_view_prescriptions(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Prescripciones — %s') % self.resident_id.name,
+            'res_model': 'cs.prescription',
+            'view_mode': 'list,form',
+            'domain': [('resident_id', '=', self.resident_id.id)],
+            'context': {'default_resident_id': self.resident_id.id},
+        }
+
+    def action_view_rescues(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Rescates — %s') % self.resident_id.name,
+            'res_model': 'cs.medical.rescue',
+            'view_mode': 'list,form',
+            'domain': [('resident_id', '=', self.resident_id.id)],
+            'context': {'default_resident_id': self.resident_id.id},
+        }
+
+    def action_view_psychology_sessions(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Sesiones Psicología — %s') % self.resident_id.name,
+            'res_model': 'cs.psychology.session',
+            'view_mode': 'list,form',
+            'domain': [('resident_id', '=', self.resident_id.id)],
+            'context': {'default_resident_id': self.resident_id.id},
+        }
+
+    def action_view_family_calls(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Llamadas Familiares — %s') % self.resident_id.name,
+            'res_model': 'cs.family.call',
+            'view_mode': 'list,form',
+            'domain': [('resident_id', '=', self.resident_id.id)],
+            'context': {'default_resident_id': self.resident_id.id},
+        }
+
+    # ─── LOPD / Consentimiento informado ──────────────────────────────────
+    lopd_consent = fields.Boolean(string='Consentimiento LOPD firmado', tracking=True)
+    lopd_consent_date = fields.Date(string='Fecha consentimiento LOPD')
+    lopd_notes = fields.Text(string='Observaciones LOPD / protección de datos')
+
+    # ─── Fecha de ingreso (relay desde admisión) ──────────────────────────
+    date_admission = fields.Date(
+        compute='_compute_date_admission',
+        string='Fecha de Ingreso',
+        store=True,
+    )
+
+    @api.depends('resident_id')
+    def _compute_date_admission(self):
+        Admission = self.env['cs.admission.process']
+        for piai in self:
+            if not piai.resident_id:
+                piai.date_admission = False
+                continue
+            admission = Admission.search(
+                [('resident_id', '=', piai.resident_id.id)],
+                order='admission_date desc',
+                limit=1,
+            )
+            piai.date_admission = admission.admission_date if admission else False
+
+    # ─── Restricciones (relay desde plan familiar para vista monitoras) ───
+    restrictions_calls = fields.Text(compute='_compute_restrictions', string='Restricciones Llamadas')
+    restrictions_visits = fields.Text(compute='_compute_restrictions', string='Restricciones Visitas')
+    restrictions_outings = fields.Text(compute='_compute_restrictions', string='Restricciones Salidas')
+    restrictions_objects = fields.Text(compute='_compute_restrictions', string='Restricciones Objetos')
+    restrictions_medication = fields.Text(compute='_compute_restrictions', string='Restricciones Medicación')
+
+    @api.depends('family_plan_ids', 'family_plan_ids.restrictions_calls',
+                 'family_plan_ids.restrictions_visits', 'family_plan_ids.restrictions_outings',
+                 'family_plan_ids.restrictions_objects', 'family_plan_ids.restrictions_medication')
+    def _compute_restrictions(self):
+        for piai in self:
+            fp = piai.family_plan_ids[:1]
+            piai.restrictions_calls = fp.restrictions_calls if fp else False
+            piai.restrictions_visits = fp.restrictions_visits if fp else False
+            piai.restrictions_outings = fp.restrictions_outings if fp else False
+            piai.restrictions_objects = fp.restrictions_objects if fp else False
+            piai.restrictions_medication = fp.restrictions_medication if fp else False
 
     # ─── Campos compute / contadores ──────────────────────────────────────
     objective_count = fields.Integer(compute='_compute_counts', string='Objetivos', store=True)
@@ -213,10 +378,67 @@ class Piai(models.Model):
                 user_id=self.env.uid,
             )
 
-        _logger.info('PIAI cron alerts processed: draft=%d, overdue=%d, critical=%d, obj=%d',
-                     len(draft_7d), len(overdue), len(critical_risks), len(overdue_obj))
+        # Riesgo alto sin revisión en 7 días
+        high_risks = self.env['cs.piai.risk'].search([
+            ('level', '=', 'high'),
+            ('state', '=', 'active'),
+            '|',
+            ('date_last_reviewed', '=', False),
+            ('date_last_reviewed', '<', today - timedelta(days=7)),
+        ])
+        for risk in high_risks:
+            risk.piai_id.activity_schedule(
+                'mail.mail_activity_data_todo',
+                summary=_('Riesgo alto sin revisión en 7 días: %s') % risk.risk_type,
+                user_id=self.env.uid,
+            )
+
+        # Alta prevista sin plan de alta registrado
+        no_discharge_plan = self.search([
+            ('state', 'in', ['active', 'in_review']),
+            ('discharge_plan_id', '=', False),
+            ('date_next_review', '<=', today + timedelta(days=30)),
+            ('date_next_review', '!=', False),
+        ])
+        for piai in no_discharge_plan:
+            piai.activity_schedule(
+                'mail.mail_activity_data_todo',
+                summary=_('Revisión próxima sin plan de alta registrado'),
+                user_id=self.env.uid,
+            )
+
+        # PIAI activo sin firma de validación inicial
+        active_piais = self.search([('state', '=', 'active')])
+        unsigned = active_piais.filtered(
+            lambda p: not p.signature_ids.filtered(
+                lambda s: s.signature_type == 'initial_validation' and s.validated
+            )
+        )
+        for piai in unsigned:
+            piai.activity_schedule(
+                'mail.mail_activity_data_todo',
+                summary=_('PIAI activo sin firma de validación inicial registrada'),
+                user_id=self.env.uid,
+            )
+
+        _logger.info(
+            'PIAI cron alerts processed: draft=%d, overdue=%d, critical=%d, high=%d, obj=%d, no_discharge=%d, unsigned=%d',
+            len(draft_7d), len(overdue), len(critical_risks), len(high_risks),
+            len(overdue_obj), len(no_discharge_plan), len(unsigned),
+        )
 
     # ─── Acciones de vista ────────────────────────────────────────────────
+    def action_view_objectives(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Objetivos — %s') % self.name,
+            'res_model': 'cs.piai.objective',
+            'view_mode': 'list,form',
+            'domain': [('piai_id', '=', self.id)],
+            'context': {'default_piai_id': self.id},
+        }
+
     def action_view_evolutions(self):
         self.ensure_one()
         return {
@@ -225,6 +447,17 @@ class Piai(models.Model):
             'res_model': 'cs.piai.evolution',
             'view_mode': 'list,form',
             'domain': [('piai_id', '=', self.id)],
+            'context': {'default_piai_id': self.id},
+        }
+
+    def action_new_review(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Nueva Revisión PIAI'),
+            'res_model': 'cs.piai.review',
+            'view_mode': 'form',
+            'target': 'new',
             'context': {'default_piai_id': self.id},
         }
 
@@ -238,6 +471,25 @@ class Piai(models.Model):
             'target': 'new',
             'context': {'default_piai_id': self.id},
         }
+
+    @api.model
+    def _cron_monthly_review_reminder(self):
+        today = fields.Date.today()
+        cutoff = today - timedelta(days=30)
+        active_piais = self.search([('state', '=', 'active')])
+        for piai in active_piais:
+            last_review = self.env['cs.piai.review'].search(
+                [('piai_id', '=', piai.id)],
+                order='review_date desc',
+                limit=1,
+            )
+            if not last_review or last_review.review_date < cutoff:
+                piai.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    summary=_('Revisión ordinaria mensual pendiente de programar'),
+                    user_id=self.env.uid,
+                )
+        _logger.info('PIAI cron monthly review: %d reminders generated', len(active_piais))
 
     def action_open_print_wizard(self):
         self.ensure_one()

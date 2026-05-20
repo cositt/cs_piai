@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Smart button PIAI en ficha del residente -->
+        <!-- Smart buttons PIAI en ficha del residente -->
         <record id="cs_resident_piai_smart_button" model="ir.ui.view">
             <field name="name">cs.resident.piai.smart.button</field>
             <field name="model">cs.resident</field>
@@ -12,11 +12,46 @@
                             class="oe_stat_button" icon="fa-file-text-o">
                         <field name="piai_count" widget="statinfo" string="PIAI"/>
                     </button>
+                    <button name="action_new_piai_review" type="object"
+                            class="oe_stat_button" icon="fa-calendar-check-o"
+                            invisible="not active_piai_id"
+                            groups="cs_piai.group_cs_direction,cs_piai.group_cs_psychology">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Nueva Revisión</span>
+                        </div>
+                    </button>
+                    <button name="action_export_piai_pdf" type="object"
+                            class="oe_stat_button" icon="fa-print"
+                            invisible="not active_piai_id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Imprimir PIAI</span>
+                        </div>
+                    </button>
+                    <button name="action_view_piai" type="object"
+                            class="oe_stat_button" icon="fa-check-square-o"
+                            invisible="active_objectives_count == 0">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="active_objectives_count" nolabel="1" readonly="1"/>
+                            </span>
+                            <span class="o_stat_text">Objetivos</span>
+                        </div>
+                    </button>
+                    <button name="action_view_piai" type="object"
+                            class="oe_stat_button" icon="fa-clock-o"
+                            invisible="overdue_objectives_count == 0">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="overdue_objectives_count" nolabel="1" readonly="1"/>
+                            </span>
+                            <span class="o_stat_text">En Retraso</span>
+                        </div>
+                    </button>
                 </xpath>
             </field>
         </record>
 
-        <!-- Alerta riesgos críticos en ficha residente (justo debajo del button_box) -->
+        <!-- Alerta riesgos críticos + resumen PIAI en ficha residente -->
         <record id="cs_resident_critical_risk_alert" model="ir.ui.view">
             <field name="name">cs.resident.critical.risk.alert</field>
             <field name="model">cs.resident</field>
@@ -27,6 +62,14 @@
                          invisible="critical_risk_count == 0">
                         <strong>&#9888; PIAI: <field name="critical_risk_count" nolabel="1" readonly="1"/> riesgo(s) crítico(s) activo(s)</strong>
                         — Abra el PIAI para más información.
+                    </div>
+                    <div class="alert alert-info mb-0" role="alert"
+                         invisible="not active_piai_id">
+                        <strong>PIAI Activo</strong> —
+                        Fase: <field name="therapeutic_phase" nolabel="1" readonly="1" widget="badge"/>
+                        <span invisible="not next_review_date">
+                            | Próxima revisión: <field name="next_review_date" nolabel="1" readonly="1"/>
+                        </span>
                     </div>
                 </xpath>
             </field>

@@ -4,6 +4,7 @@
         <menuitem id="cs_menu_piai_root"
                   name="PIAI"
                   sequence="55"
+                  web_icon="cs_piai,static/description/icon.png"
                   groups="base.group_user"/>
 
         <menuitem id="cs_menu_piai"

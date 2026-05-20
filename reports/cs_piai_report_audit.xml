@@ -132,7 +132,7 @@
                                                 <tr>
                                                     <td><t t-esc="msg.date"/></td>
                                                     <td><t t-esc="msg.author_id.name"/></td>
-                                                    <td><t t-esc="track.field_desc"/></td>
+                                                    <td><t t-esc="track.field_id.field_description"/></td>
                                                     <td><t t-esc="track.old_value_char or track.old_value_text or '—'"/></td>
                                                     <td><t t-esc="track.new_value_char or track.new_value_text or '—'"/></td>
                                                 </tr>

@@ -6,6 +6,9 @@ from . import cs_piai_evolution
 from . import cs_piai_review
 from . import cs_piai_relapse_prevention
 from . import cs_piai_discharge
+from . import cs_piai_diagnosis
+from . import cs_piai_family_plan
+from . import cs_piai_signature
 from . import cs_piai
 from . import cs_resident_extend
 from . import cs_admission_extend
