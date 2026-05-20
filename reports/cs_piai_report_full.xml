@@ -28,6 +28,12 @@
                                     <td><strong>Versión</strong></td><td><t t-esc="piai.version"/></td></tr>
                             </table>
 
+                            <t t-if="piai.resident_id.allergies">
+                                <div class="alert alert-warning" style="border-left: 4px solid #e67e22; padding: 8px 12px; margin-bottom: 1em;">
+                                    <strong>Alergias:</strong> <t t-esc="piai.resident_id.allergies"/>
+                                </div>
+                            </t>
+
                             <t t-if="piai.general_observations">
                                 <h4>Observaciones Generales</h4>
                                 <p><t t-esc="piai.general_observations"/></p>
@@ -124,6 +130,32 @@
                                                 <td><t t-esc="dict(review.fields_get(['overall_evolution'])['overall_evolution']['selection']).get(review.overall_evolution, '')"/></td>
                                                 <td><t t-esc="review.next_review_date"/></td>
                                                 <td><t t-esc="review.validated_by.name"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <t t-if="piai.psychology_session_ids">
+                                <h4>Sesiones de Psicología</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Tipo</th>
+                                            <th>Psicólogo/a</th>
+                                            <th>Estado</th>
+                                            <th>Resumen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="piai.psychology_session_ids" t-as="session">
+                                            <tr>
+                                                <td><t t-esc="session.session_date and session.session_date.strftime('%d/%m/%Y') or ''"/></td>
+                                                <td><t t-esc="dict(session.fields_get(['session_type'])['session_type']['selection']).get(session.session_type, '')"/></td>
+                                                <td><t t-esc="session.psychologist_id.name or ''"/></td>
+                                                <td><t t-esc="dict(session.fields_get(['state'])['state']['selection']).get(session.state, '')"/></td>
+                                                <td><t t-esc="session.summary or ''"/></td>
                                             </tr>
                                         </t>
                                     </tbody>
